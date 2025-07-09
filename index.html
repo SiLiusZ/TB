@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ผลงานการรักษาสำเร็จของผู้ป่วยวัณโรคทุกประเภท</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* General Styling */
+        html, body {
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f8f9fa;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .chart-container {
+            width: 100%;
+            max-width: 1280px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+            border-radius: 12px;
+            overflow: hidden;
+            margin-top: 20px;
+        }
+
+        /* Filter Container */
+        .filter-container {
+            width: 100%;
+            max-width: 1280px;
+            background-color: #ffffff;
+            border: 1px solid #e0e0e0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            padding: 15px 20px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .filter-header {
+            font-weight: 700;
+            color: #343a40;
+            font-size: 1.0em;
+            margin-right: 10px;
+            flex-shrink: 0;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px 25px;
+            flex-grow: 1;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            font-size: 0.9em;
+            color: #495057;
+        }
+
+        .filter-option input[type="checkbox"] {
+            margin-right: 8px;
+            width: 18px;
+            height: 18px;
+            accent-color: #007bff;
+            cursor: pointer;
+        }
+
+        .filter-option .color-box {
+            width: 14px;
+            height: 14px;
+            border-radius: 3px;
+            margin-right: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+            flex-shrink: 0;
+        }
+
+        /* Select/Deselect All Buttons Styling */
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+            margin-left: auto; /* Push buttons to the right */
+            flex-shrink: 0; /* Prevent buttons from shrinking */
+        }
+
+        .filter-buttons button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.85em;
+            font-weight: 600;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .filter-buttons button:hover {
+            transform: translateY(-1px);
+        }
+
+        .filter-buttons button:active {
+            transform: translateY(0);
+        }
+
+        .filter-buttons .select-all-btn {
+            background-color: #28a745; /* Green for select all */
+            color: white;
+        }
+
+        .filter-buttons .select-all-btn:hover {
+            background-color: #218838;
+        }
+
+        .filter-buttons .deselect-all-btn {
+            background-color: #dc3545; /* Red for deselect all */
+            color: white;
+        }
+
+        .filter-buttons .deselect-all-btn:hover {
+            background-color: #c82333;
+        }
+
+        /* Header */
+        .chart-header {
+            background-color: #FFD700;
+            padding: 25px 30px;
+            text-align: center;
+            color: #333333;
+            border-bottom: 1px solid #f0c300;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chart-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.1) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.1) 50%, rgba(255,255,255,0.1) 75%, transparent 75%, transparent);
+            background-size: 20px 20px;
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .chart-header h1 {
+            font-size: 1.8em;
+            margin: 0;
+            font-weight: 700;
+            color: #212529;
+            position: relative;
+            z-index: 1;
+        }
+
+        .chart-header p {
+            font-size: 1.0em;
+            margin-top: 8px;
+            color: #495057;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Chart Content Area */
+        .chart-content {
+            padding: 30px;
+            position: relative;
+        }
+
+        /* X-axis Labels (Percentages) */
+        .chart-axes {
+            display: flex;
+            margin-bottom: 15px;
+        }
+
+        .y-axis-label {
+            width: 180px;
+            flex-shrink: 0;
+        }
+
+        .x-axis-labels {
+            flex-grow: 1;
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85em;
+            color: #6c757d;
+            padding-right: 5px;
+            position: relative;
+            z-index: 2;
+            font-weight: 600;
+        }
+
+        .x-axis-labels span {
+            flex: 1;
+            text-align: left;
+            position: relative;
+        }
+
+        .x-axis-labels span:first-child {
+            text-align: left;
+        }
+
+        .x-axis-labels span:last-child {
+            text-align: right;
+            margin-left: -20px;
+        }
+
+        /* Grid Lines */
+        .chart-grid-lines {
+            position: absolute;
+            top: 70px;
+            left: 210px;
+            right: 30px;
+            bottom: 30px;
+            display: flex;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .grid-line {
+            flex: 1;
+            border-left: 1px dashed #e9ecef;
+            height: 100%;
+        }
+
+        .grid-line:first-child {
+            border-left: none;
+        }
+        .grid-line:last-child {
+            border-right: 1px dashed #e9ecef;
+        }
+
+        /* Data Rows */
+        .chart-data-rows {
+            position: relative;
+            z-index: 3;
+            background-color: #ffffff;
+            border-radius: 8px;
+        }
+
+        .chart-row {
+            display: flex;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f2f2f2;
+            transition: background-color 0.2s ease;
+        }
+
+        .chart-row:last-child {
+            border-bottom: none;
+        }
+
+        .chart-row:hover {
+            background-color: #fdfdfd;
+        }
+
+        .row-label {
+            width: 180px;
+            flex-shrink: 0;
+            font-size: 0.95em;
+            font-weight: 600;
+            color: #343a40;
+            padding-right: 15px;
+            text-align: right;
+        }
+
+        .data-bar {
+            display: flex;
+            flex-grow: 1;
+            height: 24px;
+            border-radius: 4px;
+            overflow: hidden;
+            background-color: #e9ecef;
+            position: relative;
+            box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .bar-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 0.75em;
+            white-space: nowrap;
+            padding: 0 5px;
+            box-sizing: border-box;
+            transition: width 0.3s ease-out;
+        }
+
+        /* Adjust text color for light segments for better contrast */
+        .bar-segment.color-light-blue .segment-value,
+        .bar-segment.color-dark-blue .segment-value {
+            color: #212529;
+            font-weight: 600;
+        }
+
+        /* Hide value if segment is too small */
+        .bar-segment .segment-value {
+            opacity: 1;
+            transition: opacity 0.2s ease-in-out;
+        }
+
+        .bar-segment[style*="width: 0."],
+        .bar-segment[style*="width: 1."],
+        .bar-segment[style*="width: 2."],
+        .bar-segment[style*="width: 3."],
+        .bar-segment[style*="width: 4."] {
+            font-size: 0;
+            padding: 0;
+        }
+        .bar-segment .segment-value:not(.hide-on-small) {
+            opacity: 1;
+        }
+
+
+        /* Colors for Bar Segments - Adjusted for a more cohesive palette */
+        .color-green { background-color: #28a745; }
+        .color-light-blue { background-color: #007bff; }
+        .color-dark-blue { background-color: #17a2b8; }
+        .color-red { background-color: #dc3545; }
+        .color-orange { background-color: #fd7e14; }
+        .color-grey { background-color: #6c757d; }
+        .color-dark-grey { background-color: #343a40; }
+
+
+        /* Legend */
+        .chart-legend {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 20px 30px;
+            border-top: 1px solid #e9ecef;
+            background-color: #fdfdfd;
+            font-size: 0.9em;
+            color: #495057;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            margin: 8px 20px;
+            white-space: nowrap;
+        }
+
+        .legend-color {
+            width: 18px;
+            height: 18px;
+            border-radius: 4px;
+            margin-right: 10px;
+            flex-shrink: 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Footer */
+        .chart-footer {
+            text-align: right;
+            font-size: 0.78em;
+            color: #888;
+            padding: 12px 30px;
+            background-color: #fdfdfd;
+            border-top: 1px solid #e9ecef;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+        }
+
+        /* Tooltip Styling */
+        .chart-tooltip {
+            position: fixed;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.85em;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s ease-in-out;
+            z-index: 9999;
+            white-space: nowrap;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            visibility: hidden;
+            transition: opacity 0.2s ease-in-out, visibility 0.2s ease-in-out;
+        }
+        .chart-tooltip[style*="opacity: 1"] {
+            visibility: visible;
+        }
+
+
+        .chart-tooltip ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .chart-tooltip ul li {
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+        }
+
+        .chart-tooltip ul li:last-child {
+            margin-bottom: 0;
+        }
+
+        .chart-tooltip .tooltip-color-box {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            margin-right: 8px;
+            flex-shrink: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .chart-header h1 {
+                font-size: 1.4em;
+            }
+            .chart-header p {
+                font-size: 0.9em;
+            }
+            .row-label {
+                width: 140px;
+                font-size: 0.9em;
+            }
+            .data-bar {
+                height: 22px;
+            }
+            .bar-segment {
+                font-size: 0.7em;
+            }
+            .chart-grid-lines {
+                left: 170px;
+            }
+            .chart-content {
+                padding: 20px;
+            }
+            .chart-axes {
+                margin-bottom: 10px;
+            }
+            .legend-item {
+                margin: 6px 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .chart-container {
+                margin: 10px;
+                border-radius: 8px;
+            }
+            .chart-header {
+                padding: 20px 25px;
+            }
+            .chart-header h1 {
+                font-size: 1.2em;
+            }
+            .chart-header p {
+                font-size: 0.8em;
+            }
+            .row-label {
+                width: 110px;
+                font-size: 0.85em;
+            }
+            .data-bar {
+                height: 20px;
+            }
+            .bar-segment .segment-value {
+                font-size: 0.65em;
+                padding: 0 3px;
+            }
+            .chart-grid-lines {
+                left: 140px;
+                top: 60px;
+            }
+            .chart-content {
+                padding: 15px;
+            }
+            .x-axis-labels {
+                font-size: 0.75em;
+            }
+            .chart-legend {
+                font-size: 0.8em;
+                padding: 15px 20px;
+                justify-content: flex-start;
+                border-radius: 0 0 8px 8px;
+            }
+            .legend-item {
+                margin: 4px 10px 4px 0;
+            }
+            .chart-footer {
+                padding: 10px 20px;
+            }
+            /* Responsive adjustments for filters */
+            .filter-container {
+                padding: 10px 15px;
+                gap: 10px;
+            }
+            .filter-header {
+                font-size: 0.9em;
+                width: 100%;
+                margin-bottom: 5px;
+            }
+            .filter-options {
+                gap: 10px 15px;
+            }
+            .filter-option {
+                font-size: 0.8em;
+            }
+            .filter-option input[type="checkbox"] {
+                width: 16px;
+                height: 16px;
+            }
+            .filter-option .color-box {
+                width: 12px;
+                height: 12px;
+            }
+            /* Adjust button size on smaller screens */
+            .filter-buttons button {
+                padding: 6px 10px;
+                font-size: 0.75em;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .chart-container {
+                border-radius: 0;
+                box-shadow: none;
+            }
+            .chart-header {
+                padding: 15px 20px;
+            }
+            .chart-header h1 {
+                font-size: 1.1em;
+            }
+            .chart-header p {
+                font-size: 0.75em;
+            }
+            .row-label {
+                width: 90px;
+                font-size: 0.8em;
+            }
+            .data-bar {
+                height: 18px;
+            }
+            .bar-segment .segment-value {
+                font-size: 0.6em;
+                padding: 0 2px;
+            }
+            /* Hide very small numbers on mobile */
+            .bar-segment .segment-value.hide-on-small {
+                font-size: 0;
+                padding: 0;
+                opacity: 0;
+            }
+            .chart-grid-lines {
+                left: 120px;
+                right: 15px;
+                top: 50px;
+            }
+            .chart-content {
+                padding: 10px;
+            }
+            .x-axis-labels {
+                font-size: 0.65em;
+            }
+            .chart-legend {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 10px 15px;
+            }
+            .legend-item {
+                margin-bottom: 5px;
+            }
+            .chart-footer {
+                padding: 8px 15px;
+                border-radius: 0;
+            }
+            /* Hide 10% - 90% labels on mobile */
+            .x-axis-labels span:not(:first-child):not(:last-child):not(:nth-child(6)) {
+                display: none;
+            }
+            .x-axis-labels span:nth-child(6) { /* 50% */
+                text-align: center;
+                flex: none;
+                width: 40px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="filter-container">
+        <div class="filter-header">ตัวกรองข้อมูล:</div>
+        <div class="filter-options" id="filterOptions">
+            </div>
+        <div class="filter-buttons">
+            <button id="selectAllBtn" class="select-all-btn">เลือกทั้งหมด</button>
+            <button id="deselectAllBtn" class="deselect-all-btn">ไม่เลือกทั้งหมด</button>
+        </div>
+    </div>
+
+    <div class="chart-container">
+        <div class="chart-header">
+            <h1>ผลงานการรักษาสำเร็จของผู้ป่วยวัณโรคทุกประเภท (All type Success rate) ปีงบประมาณ 2568</h1>
+            <p>ข้อมูลผู้ป่วยขึ้นทะเบียนรักษา 1 ต.ค. 67 – 21 มิ.ย. 68</p>
+        </div>
+
+        <div class="chart-content">
+            <div class="chart-axes">
+                <div class="y-axis-label"></div>
+                <div class="x-axis-labels">
+                    <span>0%</span>
+                    <span>10%</span>
+                    <span>20%</span>
+                    <span>30%</span>
+                    <span>40%</span>
+                    <span>50%</span>
+                    <span>60%</span>
+                    <span>70%</span>
+                    <span>80%</span>
+                    <span>90%</span>
+                    <span>100%</span>
+                </div>
+            </div>
+
+            <div class="chart-grid-lines">
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+                <div class="grid-line"></div>
+            </div>
+
+            <div class="chart-data-rows" id="chartDataRows">
+                </div>
+        </div>
+
+        <div class="chart-legend" id="chartLegend">
+            </div>
+        <div class="chart-footer">
+            <span>ข้อมูล ณ วันที่ <span id="dataDate"></span></span>
+        </div>
+    </div>
+
+    <div id="chartTooltip" class="chart-tooltip"></div>
+
+    <script>
+        // Define colors used in the chart and their filter labels
+        const CHART_COLORS = {
+            'color-green': { label: 'รักษาสำเร็จ', hex: '#28a745', filterLabel: 'รักษาสำเร็จ' },
+            'color-light-blue': { label: 'กำลังรักษา', hex: '#007bff', filterLabel: 'กำลังรักษา' },
+            'color-dark-blue': { label: 'ย้ายออก', hex: '#17a2b8', filterLabel: 'ย้ายออก' },
+            'color-red': { label: 'เสียชีวิต', hex: '#dc3545', filterLabel: 'เสียชีวิต' },
+            'color-orange': { label: 'ขาดยา', hex: '#fd7e14', filterLabel: 'ขาดยา' },
+            'color-grey': { label: 'อื่น ๆ', hex: '#6c757d', filterLabel: 'อื่น ๆ' },
+            'color-dark-grey': { label: 'อื่น ๆ (ไม่สำเร็จ, ไม่หาย, มีเชื้อ)', hex: '#343a40', filterLabel: 'อื่น ๆ (ไม่สำเร็จ, ไม่หาย, มีเชื้อ)' }
+        };
+
+        // Main data for the chart
+        const chartData = [
+            { name: 'รวม', segments: [
+                { type: 'color-green', value: 17.19 },
+                { type: 'color-light-blue', value: 60.23 },
+                { type: 'color-dark-blue', value: 10.37 },
+                { type: 'color-red', value: 11.36 },
+                { type: 'color-orange', value: 0.85 }
+            ]},
+            { name: 'อ่างจักร', segments: [
+                { type: 'color-green', value: 27.27 },
+                { type: 'color-light-blue', value: 72.73 }
+            ]},
+            { name: 'ท่าตะโก', segments: [
+                { type: 'color-green', value: 22.41 },
+                { type: 'color-light-blue', value: 70.69 },
+                { type: 'color-dark-blue', value: 3.45 },
+                { type: 'color-red', value: 3.45 }
+            ]},
+            { name: 'พยุหะคีรี', segments: [
+                { type: 'color-green', value: 11.76 },
+                { type: 'color-light-blue', value: 52.94 },
+                { type: 'color-dark-blue', value: 29.41 },
+                { type: 'color-orange', value: 5.88 }
+            ]},
+            { name: 'โกรกพระ', segments: [
+                { type: 'color-green', value: 12.50 },
+                { type: 'color-light-blue', value: 56.25 },
+                { type: 'color-dark-blue', value: 25.00 },
+                { type: 'color-red', value: 6.25 }
+            ]},
+            { name: 'บรรพตพิสัย', segments: [
+                { type: 'color-green', value: 38.64 },
+                { type: 'color-light-blue', value: 45.45 },
+                { type: 'color-dark-blue', value: 6.82 },
+                { type: 'color-red', value: 9.09 }
+            ]},
+            { name: 'สวรรค์ประชารักษ์', segments: [
+                { type: 'color-green', value: 18.97 },
+                { type: 'color-light-blue', value: 68.10 },
+                { type: 'color-dark-blue', value: 3.02 },
+                { type: 'color-red', value: 9.62 },
+                { type: 'color-orange', value: 0.29 }
+            ]},
+            { name: 'แม่วงก์', segments: [
+                { type: 'color-green', value: 10.34 },
+                { type: 'color-light-blue', value: 58.62 },
+                { type: 'color-dark-blue', value: 20.69 },
+                { type: 'color-red', value: 10.34 }
+            ]},
+            { name: 'หนองบัว', segments: [
+                { type: 'color-green', value: 13.04 },
+                { type: 'color-light-blue', value: 69.57 },
+                { type: 'color-dark-blue', value: 4.35 },
+                { type: 'color-red', value: 13.04 }
+            ]},
+            { name: 'ตากฟ้า', segments: [
+                { type: 'color-green', value: 21.43 },
+                { type: 'color-light-blue', value: 57.14 },
+                { type: 'color-dark-blue', value: 7.14 },
+                { type: 'color-red', value: 14.29 }
+            ]},
+            { name: 'ตาคลี', segments: [
+                { type: 'color-green', value: 10.34 },
+                { type: 'color-light-blue', value: 65.52 },
+                { type: 'color-dark-blue', value: 8.62 },
+                { type: 'color-red', value: 15.52 }
+            ]},
+            { name: 'โพธิ์ศัลย์', segments: [
+                { type: 'color-green', value: 11.76 },
+                { type: 'color-light-blue', value: 50.00 },
+                { type: 'color-dark-blue', value: 23.53 },
+                { type: 'color-red', value: 14.71 }
+            ]},
+            { name: 'ชุมแสง', segments: [
+                { type: 'color-green', value: 5.13 },
+                { type: 'color-light-blue', value: 53.85 },
+                { type: 'color-dark-blue', value: 23.08 },
+                { type: 'color-red', value: 17.95 }
+            ]},
+            { name: 'ชุมตาบง', segments: [
+                { type: 'color-green', value: 14.29 },
+                { type: 'color-dark-grey', value: 14.29 }, // Specific 'other' type
+                { type: 'color-light-blue', value: 50.00 },
+                { type: 'color-red', value: 14.29 },
+                { type: 'color-orange', value: 7.14 }
+            ]},
+            { name: 'ตาดเยา', segments: [
+                { type: 'color-green', value: 9.80 },
+                { type: 'color-light-blue', value: 52.94 },
+                { type: 'color-dark-blue', value: 15.69 },
+                { type: 'color-red', value: 21.57 }
+            ]},
+            { name: 'น้ำเจี๊ยว', segments: [
+                { type: 'color-green', value: 18.75 },
+                { type: 'color-light-blue', value: 40.63 },
+                { type: 'color-dark-blue', value: 18.75 },
+                { type: 'color-red', value: 21.88 }
+            ]}
+        ];
+
+        const dataInfo = {
+            date: '21/6/2568'
+        };
+
+        // Global variable to keep track of active filters
+        let activeFilters = {};
+
+        // DOM Elements
+        const filterOptionsContainer = document.getElementById('filterOptions');
+        const chartDataRowsContainer = document.getElementById('chartDataRows');
+        const chartLegendContainer = document.getElementById('chartLegend');
+        const dataDateSpan = document.getElementById('dataDate');
+        const chartTooltip = document.getElementById('chartTooltip');
+        const selectAllBtn = document.getElementById('selectAllBtn'); // New
+        const deselectAllBtn = document.getElementById('deselectAllBtn'); // New
+
+        // Functions to Render Chart Rows
+        function renderChartRows(data) {
+            chartDataRowsContainer.innerHTML = ''; // Clear existing content
+
+            data.forEach(rowData => {
+                const rowDiv = document.createElement('div');
+                rowDiv.classList.add('chart-row');
+
+                const labelDiv = document.createElement('div');
+                labelDiv.classList.add('row-label');
+                labelDiv.textContent = rowData.name;
+                rowDiv.appendChild(labelDiv);
+
+                const dataBarDiv = document.createElement('div');
+                dataBarDiv.classList.add('data-bar');
+
+                // Add mouse event listeners to the data bar
+                dataBarDiv.addEventListener('mousemove', (e) => showTooltip(e, rowData));
+                dataBarDiv.addEventListener('mouseleave', hideTooltip);
+
+                const visibleSegments = rowData.segments.filter(segment => activeFilters[segment.type]);
+                let totalVisibleValue = visibleSegments.reduce((sum, segment) => sum + segment.value, 0);
+
+                if (totalVisibleValue === 0) {
+                    const emptySegment = document.createElement('div');
+                    emptySegment.classList.add('bar-segment', 'color-grey');
+                    emptySegment.style.width = '100%';
+                    const valueSpan = document.createElement('span');
+                    valueSpan.classList.add('segment-value');
+                    valueSpan.textContent = 'ไม่มีข้อมูล';
+                    emptySegment.appendChild(valueSpan);
+                    dataBarDiv.appendChild(emptySegment);
+                } else {
+                    rowData.segments.forEach(segment => {
+                        const segmentDiv = document.createElement('div');
+                        segmentDiv.classList.add('bar-segment', segment.type);
+
+                        let displayValue = segment.value.toFixed(2);
+                        let segmentWidth = 0;
+
+                        if (activeFilters[segment.type]) {
+                            segmentWidth = (segment.value / totalVisibleValue) * 100;
+                        } else {
+                            segmentWidth = 0;
+                        }
+
+                        segmentDiv.style.width = `${segmentWidth}%`;
+
+                        const valueSpan = document.createElement('span');
+                        valueSpan.classList.add('segment-value');
+                        valueSpan.textContent = displayValue;
+
+                        if (segmentWidth < 5 && segmentWidth > 0) {
+                            valueSpan.classList.add('hide-on-small');
+                        } else if (segmentWidth === 0) {
+                            valueSpan.classList.add('hide-on-small');
+                        }
+
+                        segmentDiv.appendChild(valueSpan);
+                        dataBarDiv.appendChild(segmentDiv);
+                    });
+                }
+
+                rowDiv.appendChild(dataBarDiv);
+                chartDataRowsContainer.appendChild(rowDiv);
+            });
+        }
+
+        // Function to Render Legend
+        function renderLegend(colors) {
+            chartLegendContainer.innerHTML = '';
+
+            const uniqueSegmentTypesInChart = new Set();
+            chartData.forEach(row => {
+                row.segments.forEach(segment => {
+                    uniqueSegmentTypesInChart.add(segment.type);
+                });
+            });
+
+            Object.keys(colors).forEach(key => {
+                if (!uniqueSegmentTypesInChart.has(key) || !activeFilters[key]) {
+                    return;
+                }
+
+                const item = colors[key];
+                const legendItemDiv = document.createElement('div');
+                legendItemDiv.classList.add('legend-item');
+
+                const colorSpan = document.createElement('span');
+                colorSpan.classList.add('legend-color', key);
+                legendItemDiv.appendChild(colorSpan);
+
+                const textSpan = document.createElement('span');
+                textSpan.textContent = `${item.label} ร้อยละ`;
+                legendItemDiv.appendChild(textSpan);
+
+                chartLegendContainer.appendChild(legendItemDiv);
+            });
+        }
+
+        // Function to Update Data Date
+        function updateDataDate(dateString) {
+            dataDateSpan.textContent = dateString;
+        }
+
+        // Function to Render Filter Checkboxes
+        function renderFilters() {
+            filterOptionsContainer.innerHTML = '';
+
+            const uniqueSegmentTypes = new Set();
+            chartData.forEach(row => {
+                row.segments.forEach(segment => {
+                    uniqueSegmentTypes.add(segment.type);
+                });
+            });
+
+            Object.keys(CHART_COLORS).forEach(type => {
+                if (!uniqueSegmentTypes.has(type)) {
+                    return;
+                }
+
+                const colorInfo = CHART_COLORS[type];
+                const filterOptionDiv = document.createElement('label');
+                filterOptionDiv.classList.add('filter-option');
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = activeFilters[type];
+                checkbox.dataset.filterType = type;
+
+                checkbox.addEventListener('change', (event) => {
+                    activeFilters[type] = event.target.checked;
+                    renderChartRows(chartData);
+                    renderLegend(CHART_COLORS);
+                });
+
+                const colorBox = document.createElement('span');
+                colorBox.classList.add('color-box');
+                colorBox.style.backgroundColor = colorInfo.hex;
+
+                const textSpan = document.createElement('span');
+                textSpan.textContent = colorInfo.filterLabel || colorInfo.label;
+
+                filterOptionDiv.appendChild(checkbox);
+                filterOptionDiv.appendChild(colorBox);
+                filterOptionDiv.appendChild(textSpan);
+
+                filterOptionsContainer.appendChild(filterOptionDiv);
+            });
+        }
+
+        // NEW: Function to handle Select All / Deselect All
+        function updateAllCheckboxes(checkedState) {
+            const checkboxes = document.querySelectorAll('#filterOptions input[type="checkbox"]');
+            checkboxes.forEach(checkbox => {
+                const type = checkbox.dataset.filterType;
+                if (activeFilters.hasOwnProperty(type)) { // Ensure it's a valid filter type
+                    activeFilters[type] = checkedState;
+                    checkbox.checked = checkedState;
+                }
+            });
+            renderChartRows(chartData);
+            renderLegend(CHART_COLORS);
+        }
+
+        // Tooltip Functionality
+        function showTooltip(event, rowData) {
+            const dataBar = event.currentTarget;
+            const barRect = dataBar.getBoundingClientRect();
+
+            const mouseX = event.clientX;
+            const mouseY = event.clientY;
+
+            const mouseXInBar = mouseX - barRect.left;
+            const totalWidth = barRect.width;
+
+            let accumulatedWidth = 0;
+            let hoveredSegment = null;
+
+            for (const segment of rowData.segments) {
+                if (activeFilters[segment.type]) {
+                    const visibleSegmentsInRow = rowData.segments.filter(s => activeFilters[s.type]);
+                    const totalVisibleValueInRow = visibleSegmentsInRow.reduce((sum, s) => sum + s.value, 0);
+
+                    if (totalVisibleValueInRow === 0) {
+                        continue;
+                    }
+
+                    const currentSegmentDisplayWidthPx = (segment.value / totalVisibleValueInRow) * totalWidth;
+                    accumulatedWidth += currentSegmentDisplayWidthPx;
+
+                    if (mouseXInBar <= accumulatedWidth) {
+                        hoveredSegment = segment;
+                        break;
+                    }
+                }
+            }
+
+            if (hoveredSegment) {
+                let tooltipContent = `<p style="font-weight: bold; margin-bottom: 5px;">${rowData.name}</p>`;
+                tooltipContent += '<ul>';
+
+                rowData.segments.forEach(seg => {
+                    if (activeFilters[seg.type] || seg === hoveredSegment) {
+                        const isHovered = (seg === hoveredSegment);
+                        const colorInfo = CHART_COLORS[seg.type];
+                        const label = colorInfo ? colorInfo.label : seg.type;
+                        const hex = colorInfo ? colorInfo.hex : '#ccc';
+                        tooltipContent += `
+                            <li style="${isHovered ? 'font-weight: bold;' : ''}">
+                                <span class="tooltip-color-box" style="background-color: ${hex};"></span>
+                                ${label}: ${seg.value.toFixed(2)}%
+                            </li>
+                        `;
+                    }
+                });
+                tooltipContent += '</ul>';
+
+                chartTooltip.innerHTML = tooltipContent;
+                chartTooltip.style.opacity = 1;
+
+                const tooltipRect = chartTooltip.getBoundingClientRect();
+
+                let tooltipX = mouseX + 15;
+                let tooltipY = mouseY + 15;
+
+                if (tooltipX + tooltipRect.width > window.innerWidth - 10) {
+                    tooltipX = mouseX - tooltipRect.width - 15;
+                }
+
+                if (tooltipY + tooltipRect.height > window.innerHeight - 10) {
+                    tooltipY = mouseY - tooltipRect.height - 15;
+                }
+
+                chartTooltip.style.left = `${tooltipX}px`;
+                chartTooltip.style.top = `${tooltipY}px`;
+            } else {
+                hideTooltip();
+            }
+        }
+
+        function hideTooltip() {
+            chartTooltip.style.opacity = 0;
+            chartTooltip.innerHTML = '';
+        }
+
+        // Initialization
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize activeFilters: all categories are active by default
+            Object.keys(CHART_COLORS).forEach(key => {
+                activeFilters[key] = true;
+            });
+
+            renderFilters();
+            renderChartRows(chartData);
+            renderLegend(CHART_COLORS);
+            updateDataDate(dataInfo.date);
+
+            // Add event listeners for the new buttons
+            selectAllBtn.addEventListener('click', () => updateAllCheckboxes(true));
+            deselectAllBtn.addEventListener('click', () => updateAllCheckboxes(false));
+
+            window.addEventListener('scroll', hideTooltip);
+            window.addEventListener('resize', hideTooltip);
+        });
+
+    </script>
+</body>
+</html>
