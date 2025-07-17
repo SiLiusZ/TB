@@ -30,7 +30,7 @@
             text-align: center;
             color: #2c3e50;
             margin-top: 0;
-            font-size: 1.5em;
+            font-size: 2.2em; /* Adjusted default font size for desktop */
         }
         #mapid {
             height: 500px;
@@ -225,13 +225,13 @@
                 padding: 10px;
             }
             h1 {
-                font-size: 2em; /* Reduced for tablets */
+                font-size: 1.8em; /* Adjusted for tablets */
             }
             #mapid {
                 height: 400px; /* Slightly reduce map height for tablets */
             }
             .controls {
-                position: relative;
+                position: relative; /* Changed to relative to prevent overlap with legend and stack better */
                 top: auto;
                 left: auto;
                 margin-bottom: 10px;
@@ -259,7 +259,7 @@
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.5em; /* Further reduce for very small phones */
+                font-size: 1.3em; /* Further reduce for very small phones */
             }
             #mapid {
                 height: 300px; /* Reduce map height significantly for phones */
