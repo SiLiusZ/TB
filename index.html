@@ -30,7 +30,7 @@
             text-align: center;
             color: #2c3e50;
             margin-top: 0;
-            font-size: 2.2em; /* Adjusted default font size for desktop */
+            font-size: 1.5em; /* Adjusted for better responsiveness */
         }
         #mapid {
             height: 500px;
@@ -204,6 +204,16 @@
         #customTooltip.show {
             opacity: 1;
         }
+        /* Style for the colored dot in the tooltip */
+        .tooltip-color-dot {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
 
         /* Define colors for each outcome */
         .outcome-ChangeDiagnosis { background-color: #FF6347; /* Tomato */ }
@@ -214,7 +224,79 @@
         .outcome-OnTreatment { background-color: #9C27B0; /* Purple */ }
         .outcome-RRMDRBeforeMonth5 { background-color: #FF9800; /* Orange */ }
         .outcome-TransferredOut { background-color: #607D8B; /* Blue Grey */ }
-        .outcome-Undefined { background-color: #B0BEC5; /* Light Blue Grey for 'ไม่ระบุ' */ } /* Added for 'ไม่ระบุ' */
+        .outcome-Undefined { background-color: #B0BEC5; /* Light Blue Grey for 'ไม่ระบุ' */ } /* Added for 'ไม่ระระบุ' */
+
+
+        /* Styles for AI Analysis Section */
+        #analysisResults {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        #analysisResults h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        #analysisResults h3 { /* New style for sub-headings */
+            color: #34495e;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        #analysisResults p {
+            font-size: 1.1em;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #555;
+            text-align: justify;
+        }
+        #analysisResults ul {
+            list-style-type: disc;
+            margin-left: 25px;
+            margin-bottom: 15px;
+            color: #555;
+        }
+        #analysisResults ul li {
+            margin-bottom: 5px;
+        }
+
+        /* Loading Overlay Styles */
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 1.5em;
+            z-index: 2000;
+            display: none; /* Hidden by default */
+            backdrop-filter: blur(5px); /* Optional: blur background */
+        }
+        #loadingOverlay .spinner {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #3498db;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
 
 
         /* Responsive Design */
@@ -225,13 +307,13 @@
                 padding: 10px;
             }
             h1 {
-                font-size: 1.8em; /* Adjusted for tablets */
+                font-size: 1.5em; /* Reduced for tablets */
             }
             #mapid {
                 height: 400px; /* Slightly reduce map height for tablets */
             }
             .controls {
-                position: relative; /* Changed to relative to prevent overlap with legend and stack better */
+                position: relative;
                 top: auto;
                 left: auto;
                 margin-bottom: 10px;
@@ -255,11 +337,23 @@
                 flex-direction: column;
                 gap: 10px;
             }
+            #analysisResults h2 {
+                font-size: 1.2em;
+            }
+            #analysisResults h3 {
+                font-size: 1.1em;
+            }
+            #analysisResults p {
+                font-size: 1em;
+            }
+            #analysisResults ul {
+                margin-left: 20px;
+            }
         }
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.3em; /* Further reduce for very small phones */
+                font-size: 1.2em; /* Further reduce for very small phones */
             }
             #mapid {
                 height: 300px; /* Reduce map height significantly for phones */
@@ -285,36 +379,45 @@
 <body>
 
     <div class="container">
-            <h1>แผนที่แสดงจำนวนและข้อมูลผู้ป่วยวัณโรค ปีงบประมาณ 2568</h1>
-            <h1>จังหวัดนครสวรรค์</h1>
+        <h1>แผนที่แสดงจำนวนและข้อมูลผู้ป่วยวัณโรค ปีงบประมาณ 2568</h1>
+        <h1>จังหวัดนครสวรรค์</h1>
 
-            <div id="mapid">
-                    <div class="controls">
-                        <label for="district-filter">เลือกอำเภอ:</label>
-                        <select id="district-filter">
-                                <option value="ทั้งหมด">ทั้งหมด</option>
-                            </select>
-                        <label for="outcome-filter">ผลการรักษา:</label>
-                        <select id="outcome-filter">
-                                <option value="ทั้งหมด">ทั้งหมด</option>
-                            </select>
-                        <label for="hospital-filter">เลือกโรงพยาบาล:</label>
-                        <select id="hospital-filter">
-                                <option value="ทั้งหมด">ทั้งหมด</option>
-                            </select>
-                        </div>
-                </div>
-
-            <div id="chartContainer">
-                <h2>ผลงานการรักษาสำเร็จของผู้ป่วยวัณโรคทุกประเภท (All type Success rate) ปีงบประมาณ 2568</h2>
-                <div id="outcomeChartLegend" class="outcome-legend">
-                    </div>
-                <div id="staticHospitalChart" class="stacked-bar-chart">
-                    </div>
+        <div id="mapid">
+            <div class="controls">
+                <label for="district-filter">เลือกอำเภอ:</label>
+                <select id="district-filter">
+                    <option value="ทั้งหมด">ทั้งหมด</option>
+                </select>
+                <label for="outcome-filter">ผลการรักษา:</label>
+                <select id="outcome-filter">
+                    <option value="ทั้งหมด">ทั้งหมด</option>
+                </select>
+                <label for="hospital-filter">เลือกโรงพยาบาล:</label>
+                <select id="hospital-filter">
+                    <option value="ทั้งหมด">ทั้งหมด</option>
+                </select>
             </div>
+        </div>
+
+        <div id="chartContainer">
+            <h2>ผลงานการรักษาสำเร็จของผู้ป่วยวัณโรคทุกประเภท (All type Success rate) ปีงบประมาณ 2568</h2>
+            <div id="outcomeChartLegend" class="outcome-legend"></div>
+            <div id="staticHospitalChart" class="stacked-bar-chart"></div>
+        </div>
+
+        <div id="analysisResults">
+            <h2>ผลการวิเคราะห์ข้อมูลผู้ป่วยวัณโรค (โดย AI)</h2>
+            <div id="analysisParagraphs">
+                <p>กำลังโหลดผลการวิเคราะห์...</p>
+            </div>
+        </div>
 
     </div>
     <div id="customTooltip"></div>
+    <div id="loadingOverlay">
+        <div class="spinner"></div>
+        <span>กำลังวิเคราะห์ข้อมูล... โปรดรอสักครู่</span>
+    </div>
 
     <script>
         const map = L.map('mapid').setView([13.7563, 100.5018], 6);
@@ -378,7 +481,7 @@
                 const props = feature.properties;
                 const geoKey = `${props['จังหวัด']}-${props['อำเภอ']}-${props['ตำบล']}`;
                 // Use 'ไม่ระบุ' if outcome is null or undefined
-                const outcome = props['ผลการรักษา'] || 'ไม่ระระบุ'; // Fixed typo here
+                const outcome = props['ผลการรักษา'] || 'ไม่ระระบุ';
 
                 if (!aggregatedFeatures[geoKey]) {
                     aggregatedFeatures[geoKey] = {
@@ -541,91 +644,113 @@
             const hospitalOutcomeCounts = {}; // { hospitalName: { outcome1: count, outcome2: count, ... }, ... }
             const allOutcomesPresent = new Set(); // To collect all unique outcomes for the legend
 
+            // Calculate overall province data first
+            let overallProvinceCounts = { total: 0 };
+
             data.features.forEach(feature => {
                 const hospital = feature.properties['โรงพยาบาล'] || 'ไม่ระบุ';
                 const outcome = feature.properties['ผลการรักษา'] || 'ไม่ระบุ';
 
+                // Aggregate for individual hospitals
                 if (!hospitalOutcomeCounts[hospital]) {
                     hospitalOutcomeCounts[hospital] = { total: 0 };
                 }
                 if (!hospitalOutcomeCounts[hospital][outcome]) {
                     hospitalOutcomeCounts[hospital][outcome] = 0;
                 }
-
                 hospitalOutcomeCounts[hospital][outcome]++;
                 hospitalOutcomeCounts[hospital].total++;
+
+                // Aggregate for overall province
+                if (!overallProvinceCounts[outcome]) {
+                    overallProvinceCounts[outcome] = 0;
+                }
+                overallProvinceCounts[outcome]++;
+                overallProvinceCounts.total++;
+
                 allOutcomesPresent.add(outcome);
             });
 
-            // Sort hospitals by total patient count in descending order
             const sortedHospitals = Object.entries(hospitalOutcomeCounts).sort(([, countsA], [, countsB]) => countsB.total - countsA.total);
 
             const chartContainer = document.getElementById('staticHospitalChart');
             chartContainer.innerHTML = ''; // Clear existing bars
 
-            if (sortedHospitals.length === 0) {
+            if (sortedHospitals.length === 0 && overallProvinceCounts.total === 0) {
                 chartContainer.innerHTML = '<p style="text-align: center; color: #777;">ไม่มีข้อมูลผู้ป่วยสำหรับโรงพยาบาล</p>';
                 document.getElementById('outcomeChartLegend').innerHTML = ''; // Clear legend too
                 return;
             }
 
-            // Render chart bars
+            // Render Overall Province Bar (if there's data)
+            if (overallProvinceCounts.total > 0) {
+                renderBar('ภาพรวมจังหวัดนครสวรรค์', overallProvinceCounts, allOutcomesPresent, chartContainer);
+            }
+
+            // Render individual hospital bars
             sortedHospitals.forEach(([hospitalName, outcomeCounts]) => {
-                const barItem = document.createElement('div');
-                barItem.classList.add('bar-item');
-
-                const barLabel = document.createElement('div');
-                barLabel.classList.add('bar-label');
-                barLabel.textContent = hospitalName;
-                barItem.appendChild(barLabel);
-
-                const barBody = document.createElement('div');
-                barBody.classList.add('bar-body');
-
-                // Add event listeners for custom tooltip to the whole barBody
-                barBody.addEventListener('mouseover', (e) => {
-                    let tooltipText = `<b>${hospitalName}</b><br>ยอดรวมผู้ป่วย: ${outcomeCounts.total} ราย<br><br>แบ่งตามผลการรักษา:<br>`;
-                    const sortedOutcomesForTooltip = Object.keys(outcomeCounts).filter(k => k !== 'total').sort();
-                    for (const outcome of sortedOutcomesForTooltip) {
-                        const count = outcomeCounts[outcome] || 0;
-                        const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
-                        tooltipText += `• ${outcome}: ${count} ราย (${percentage}%)<br>`;
-                    }
-                    showTooltip(e, tooltipText);
-                });
-                barBody.addEventListener('mouseout', hideTooltip);
-                barBody.addEventListener('mousemove', (e) => {
-                    moveTooltip(e);
-                });
-
-
-                // Sort outcomes alphabetically for consistent display within bars
-                const sortedOutcomes = Array.from(allOutcomesPresent).sort();
-
-                sortedOutcomes.forEach(outcome => {
-                    const count = outcomeCounts[outcome] || 0;
-                    const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
-
-                    if (percentage > 0) { // Only create segment if there's data for it
-                        const barSegment = document.createElement('div');
-                        barSegment.classList.add('bar-segment');
-                        barSegment.classList.add(outcomeColorClasses[outcome] || 'outcome-Undefined'); // Apply color class
-                        barSegment.style.width = `${percentage}%`;
-
-                        // Display percentage for segments with value > 0
-                        barSegment.textContent = `${percentage}%`;
-
-                        barBody.appendChild(barSegment);
-                    }
-                });
-
-                barItem.appendChild(barBody);
-                chartContainer.appendChild(barItem);
+                renderBar(hospitalName, outcomeCounts, allOutcomesPresent, chartContainer);
             });
 
             // Render chart legend (call separately to ensure all unique outcomes are collected)
             renderOutcomeChartLegend(Array.from(allOutcomesPresent).sort());
         }
+
+        // Helper function to render a single bar (for hospital or overall)
+        function renderBar(name, outcomeCounts, allOutcomesPresent, containerElement) {
+            const barItem = document.createElement('div');
+            barItem.classList.add('bar-item');
+
+            const barLabel = document.createElement('div');
+            barLabel.classList.add('bar-label');
+            barLabel.textContent = name;
+            barItem.appendChild(barLabel);
+
+            const barBody = document.createElement('div');
+            barBody.classList.add('bar-body');
+
+            // Add event listeners for custom tooltip to the whole barBody
+            barBody.addEventListener('mouseover', (e) => {
+                let tooltipText = `<b>${name}</b><br>ยอดรวมผู้ป่วย: ${outcomeCounts.total} ราย<br><br>แบ่งตามผลการรักษา:<br>`;
+                const sortedOutcomesForTooltip = Object.keys(outcomeCounts).filter(k => k !== 'total').sort();
+                for (const outcome of sortedOutcomesForTooltip) {
+                    const count = outcomeCounts[outcome] || 0;
+                    const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
+                    // Add a colored span before the outcome name in the tooltip
+                    const colorClass = outcomeColorClasses[outcome] || 'outcome-Undefined';
+                    tooltipText += `<span class="tooltip-color-dot ${colorClass}"></span> ${outcome}: ${count} ราย (${percentage}%)<br>`;
+                }
+                showTooltip(e, tooltipText);
+            });
+            barBody.addEventListener('mouseout', hideTooltip);
+            barBody.addEventListener('mousemove', (e) => {
+                moveTooltip(e);
+            });
+
+            // Sort outcomes alphabetically for consistent display within bars
+            const sortedOutcomes = Array.from(allOutcomesPresent).sort();
+
+            sortedOutcomes.forEach(outcome => {
+                const count = outcomeCounts[outcome] || 0;
+                const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
+
+                if (percentage > 0) { // Only create segment if there's data for it
+                    const barSegment = document.createElement('div');
+                    barSegment.classList.add('bar-segment');
+                    barSegment.classList.add(outcomeColorClasses[outcome] || 'outcome-Undefined'); // Apply color class
+                    barSegment.style.width = `${percentage}%`;
+
+                    // Display percentage for segments with value > 0
+                    barSegment.textContent = `${percentage}%`;
+
+                    barBody.appendChild(barSegment);
+                }
+            });
+
+            barItem.appendChild(barBody);
+            containerElement.appendChild(barItem);
+        }
+
 
         // Function to show custom tooltip
         function showTooltip(event, text) {
@@ -644,26 +769,24 @@
             const chartRect = document.getElementById('chartContainer').getBoundingClientRect();
             const tooltipRect = customTooltip.getBoundingClientRect();
 
-            // *** IMPORTANT CHANGE: Add scroll position to clientX/Y ***
+            // Add scroll position to clientX/Y
             let newX = event.clientX + window.scrollX + xOffset;
             let newY = event.clientY + window.scrollY + yOffset;
 
             // Adjust X if tooltip goes off right edge
-            // Check against document.documentElement.clientWidth (viewport width)
-            if (newX + tooltipRect.width > document.documentElement.clientWidth - 20 + window.scrollX) { // -20 for a small margin
+            if (newX + tooltipRect.width > document.documentElement.clientWidth - 20 + window.scrollX) {
                 newX = event.clientX + window.scrollX - tooltipRect.width - xOffset;
             }
             // Adjust Y if tooltip goes off bottom edge
-            // Check against document.documentElement.clientHeight (viewport height)
-            if (newY + tooltipRect.height > document.documentElement.clientHeight - 20 + window.scrollY) { // -20 for a small margin
+            if (newY + tooltipRect.height > document.documentElement.clientHeight - 20 + window.scrollY) {
                 newY = event.clientY + window.scrollY - tooltipRect.height - yOffset;
             }
              // Ensure tooltip doesn't go off the left edge
-            if (newX < window.scrollX) { // Don't go past left edge of scroll
+            if (newX < window.scrollX) {
                 newX = window.scrollX;
             }
             // Ensure tooltip doesn't go off the top edge
-            if (newY < window.scrollY) { // Don't go past top edge of scroll
+            if (newY < window.scrollY) {
                 newY = window.scrollY;
             }
 
@@ -717,6 +840,7 @@
             let dataToProcessForChart = rawGeojsonData.features; // Start with all raw data for chart
 
             // Filter for chart: Apply Hospital filter first
+            // Note: Overall province bar will still reflect ALL filtered data
             if (selectedHospital !== 'ทั้งหมด') {
                 dataToProcessForChart = dataToProcessForChart.filter(feature =>
                     feature.properties['โรงพยาบาล'] === selectedHospital
@@ -793,6 +917,191 @@
             updateLegend(selectedOutcome);
             addLabelsToMap(filteredGeoJSONForMap, selectedOutcome); // Update labels after filtering
             renderStaticHospitalChart({ type: 'FeatureCollection', features: dataToProcessForChart }); // Update chart based on currently filtered raw data
+
+            // Run AI analysis with the filtered raw data for the chart
+            runAIAnalysis({ type: 'FeatureCollection', features: dataToProcessForChart });
+        }
+
+        // Function to simulate AI analysis and update paragraphs
+        async function runAIAnalysis(data) {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const analysisParagraphs = document.getElementById('analysisParagraphs');
+            loadingOverlay.style.display = 'flex'; // Show loading overlay
+            analysisParagraphs.innerHTML = '<p>กำลังโหลดผลการวิเคราะห์...</p>'; // Reset content
+
+            try {
+                const totalPatients = data.features.length;
+                let hospitalOutcomeCounts = {}; // To aggregate data per hospital, similar to chart
+
+                data.features.forEach(f => {
+                    const hospital = f.properties['โรงพยาบาล'] || 'ไม่ระบุ';
+                    const outcome = f.properties['ผลการรักษา'] || 'ไม่ระบุ';
+
+                    if (!hospitalOutcomeCounts[hospital]) {
+                        hospitalOutcomeCounts[hospital] = { total: 0, 'Cured': 0, 'Completed': 0, 'Lost to follow-up': 0, 'Died': 0, 'On treatment':0, 'Change diagnosis':0, 'RR/MDR ก่อนเดือนที่ 5':0, 'Transferred out':0, 'Undefined':0 }; // Ensure all outcomes are initialized
+                    }
+                    hospitalOutcomeCounts[hospital].total++;
+                    if (hospitalOutcomeCounts[hospital][outcome] !== undefined) {
+                        hospitalOutcomeCounts[hospital][outcome]++;
+                    } else { // Handle outcomes not explicitly listed but present in data
+                         hospitalOutcomeCounts[hospital]['Undefined']++; // Fallback for unexpected outcomes
+                    }
+                });
+
+                // Calculate overall province data
+                let overallCured = 0;
+                let overallCompleted = 0;
+                let overallLost = 0;
+                let overallDied = 0;
+                let overallOnTreatment = 0;
+                let overallChangeDiagnosis = 0;
+                let overallRRMDR = 0;
+                let overallTransferredOut = 0;
+                let overallUndefined = 0;
+
+
+                for (const hospital in hospitalOutcomeCounts) {
+                    overallCured += hospitalOutcomeCounts[hospital]['Cured'];
+                    overallCompleted += hospitalOutcomeCounts[hospital]['Completed'];
+                    overallLost += hospitalOutcomeCounts[hospital]['Lost to follow-up'];
+                    overallDied += hospitalOutcomeCounts[hospital]['Died'];
+                    overallOnTreatment += hospitalOutcomeCounts[hospital]['On treatment'];
+                    overallChangeDiagnosis += hospitalOutcomeCounts[hospital]['Change diagnosis'];
+                    overallRRMDR += hospitalOutcomeCounts[hospital]['RR/MDR ก่อนเดือนที่ 5'];
+                    overallTransferredOut += hospitalOutcomeCounts[hospital]['Transferred out'];
+                    overallUndefined += hospitalOutcomeCounts[hospital]['Undefined'];
+
+                }
+
+
+                const overallSuccessRate = totalPatients > 0 ? (((overallCured + overallCompleted) / totalPatients) * 100).toFixed(1) : 0;
+                const overallLostToFollowUpPercentage = totalPatients > 0 ? ((overallLost / totalPatients) * 100).toFixed(1) : 0;
+                const overallDiedPercentage = totalPatients > 0 ? ((overallDied / totalPatients) * 100).toFixed(1) : 0;
+                // Calculate percentages for each outcome type
+                const percCured = totalPatients > 0 ? ((overallCured / totalPatients) * 100).toFixed(1) : 0;
+                const percCompleted = totalPatients > 0 ? ((overallCompleted / totalPatients) * 100).toFixed(1) : 0;
+                const percOnTreatment = totalPatients > 0 ? ((overallOnTreatment / totalPatients) * 100).toFixed(1) : 0;
+                const percChangeDiagnosis = totalPatients > 0 ? ((overallChangeDiagnosis / totalPatients) * 100).toFixed(1) : 0;
+                const percRRMDR = totalPatients > 0 ? ((overallRRMDR / totalPatients) * 100).toFixed(1) : 0;
+                const percTransferredOut = totalPatients > 0 ? ((overallTransferredOut / totalPatients) * 100).toFixed(1) : 0;
+                const percLostToFollowUp = totalPatients > 0 ? ((overallLost / totalPatients) * 100).toFixed(1) : 0;
+                const percDied = totalPatients > 0 ? ((overallDied / totalPatients) * 100).toFixed(1) : 0;
+                const percUndefined = totalPatients > 0 ? ((overallUndefined / totalPatients) * 100).toFixed(1) : 0;
+
+
+                // Identify top/bottom performing hospitals based on success rate
+                let hospitalPerformance = [];
+                for (const hospitalName in hospitalOutcomeCounts) {
+                    const hData = hospitalOutcomeCounts[hospitalName];
+                    if (hData.total > 0) {
+                        const successRate = ((hData['Cured'] + hData['Completed']) / hData.total * 100).toFixed(1);
+                        const lostRate = (hData['Lost to follow-up'] / hData.total * 100).toFixed(1);
+                        const diedRate = (hData['Died'] / hData.total * 100).toFixed(1);
+                        hospitalPerformance.push({
+                            name: hospitalName,
+                            total: hData.total,
+                            successRate: parseFloat(successRate),
+                            lostRate: parseFloat(lostRate),
+                            diedRate: parseFloat(diedRate)
+                        });
+                    }
+                }
+
+                hospitalPerformance.sort((a, b) => b.successRate - a.successRate); // Sort by success rate descending
+
+                let topHospitals = hospitalPerformance.slice(0, Math.min(3, hospitalPerformance.length));
+                let bottomHospitals = hospitalPerformance.slice(Math.max(0, hospitalPerformance.length - 3), hospitalPerformance.length).sort((a, b) => a.successRate - b.successRate);
+
+                // --- START: Added for Console Output ---
+                console.log("--- Performance Metrics for Each Hospital (as calculated for AI analysis) ---");
+                if (hospitalPerformance.length > 0) {
+                    hospitalPerformance.forEach(h => {
+                        console.log(`Hospital: ${h.name}`);
+                        console.log(`  Total Patients: ${h.total}`);
+                        console.log(`  Success Rate (Cured + Completed): ${h.successRate}%`);
+                        console.log(`  Lost to Follow-up Rate: ${h.lostRate}%`);
+                        console.log(`  Died Rate: ${h.diedRate}%`);
+                        console.log('---');
+                    });
+                } else {
+                    console.log("No hospital data available based on current filters for detailed metrics.");
+                }
+                console.log("------------------------------------------------------------------");
+                // --- END: Added for Console Output ---
+
+
+                // Generate basic analysis paragraphs with simpler headings
+                let analysisContent = '';
+
+                if (totalPatients === 0) {
+                    analysisContent = '<p><b>ไม่มีข้อมูลผู้ป่วยให้วิเคราะห์ตามเงื่อนไขที่เลือก.</b></p>';
+                } else {
+                    // Section 1: ภาพรวมข้อมูลผู้ป่วย
+                    analysisContent += `<h3>ภาพรวมข้อมูลผู้ป่วย</h3>`;
+                    analysisContent += `<p>ข้อมูลผู้ป่วยวัณโรคจำนวน <b>${totalPatients} ราย</b> (ตามตัวกรองปัจจุบัน) แสดงผลการรักษาดังนี้:</p>
+                        <ul>
+                            <li><b>รักษาหาย (Cured):</b> ${overallCured} ราย (${percCured}%)</li>
+                            <li><b>รักษาครบ (Completed):</b> ${overallCompleted} ราย (${percCompleted}%)</li>
+                            <li><b>ยังอยู่ระหว่างรักษา (On treatment):</b> ${overallOnTreatment} ราย (${percOnTreatment}%)</li>
+                            <li><b>เปลี่ยนการวินิจฉัย:</b> ${overallChangeDiagnosis} ราย (${percChangeDiagnosis}%)</li>
+                            <li><b>RR/MDR ก่อนเดือนที่ 5:</b> ${overallRRMDR} ราย (${percRRMDR}%)</li>
+                            <li><b>ย้ายออก:</b> ${overallTransferredOut} ราย (${percTransferredOut}%)</li>
+                            <li><b>ขาดการรักษา (Lost to follow-up):</b> ${overallLost} ราย (${percLostToFollowUp}%)</li>
+                            <li><b>เสียชีวิต:</b> ${overallDied} ราย (${percDied}%)</li>
+                            ${overallUndefined > 0 ? `<li><b>ไม่ระบุ:</b> ${overallUndefined} ราย (${percUndefined}%)</li>` : ''}
+                        </ul>
+                        <p>โดยรวมแล้ว อัตราความสำเร็จของการรักษา (หาย + ครบ) อยู่ที่ <b>${overallSuccessRate}%</b></p>
+                    `;
+
+                    // Section 2: ผลงานของโรงพยาบาล
+                    analysisContent += `<h3>ผลงานของโรงพยาบาล</h3>`;
+                    if (topHospitals.length > 0) {
+                        analysisContent += `<p>โรงพยาบาลที่มีอัตราความสำเร็จสูง 3 อันดับแรกคือ: `;
+                        topHospitals.forEach((h, index) => {
+                            analysisContent += `<b>${h.name}</b> (สำเร็จ ${h.successRate}%)`;
+                            if (index < topHospitals.length - 1) analysisContent += ', ';
+                        });
+                        analysisContent += `. โรงพยาบาลเหล่านี้ทำผลงานได้ดี ควรนำไปเป็นตัวอย่าง.</p>`;
+                    }
+
+                    if (bottomHospitals.length > 0 && bottomHospitals.length !== hospitalPerformance.length) {
+                        const hospitalsWithIssues = bottomHospitals.filter(h => h.lostRate > 0 || h.diedRate > 0);
+                        if (hospitalsWithIssues.length > 0) {
+                           analysisContent += `<p>ส่วนโรงพยาบาลที่ยังมีความท้าทาย โดยมีสัดส่วนผู้ป่วยขาดการรักษาหรือเสียชีวิตสูง ได้แก่ ${hospitalsWithIssues.map(h => `<b>${h.name}</b>`).join(', ')}. โรงพยาบาลเหล่านี้ต้องพิจารณาหาสาเหตุและปรับปรุงการดูแลผู้ป่วย.</p>`;
+                        }
+                    }
+                    analysisContent += `<p>สามารถดูรายละเอียดผลงานของแต่ละโรงพยาบาลได้จากกราฟแท่งด้านบน.</p>`;
+
+
+                    // Section 3: ข้อสังเกตและคำแนะนำ
+                    analysisContent += `<h3>ข้อสังเกตและคำแนะนำ</h3>`;
+                    analysisContent += `<p>หากดูจากข้อมูลที่ผ่านมา มีข้อสังเกตและคำแนะนำดังนี้:</p><ul>`;
+
+                    if (parseFloat(overallSuccessRate) >= 80) {
+                        analysisContent += `<li><b>อัตราสำเร็จสูง:</b> ภาพรวมการรักษาวัณโรคในจังหวัดทำได้ดี ควรพยายามรักษาระดับนี้ไว้และแลกเปลี่ยนวิธีการทำงานกับโรงพยาบาลอื่น.</li>`;
+                    } else {
+                        analysisContent += `<li><b>ต้องปรับปรุงอัตราสำเร็จ:</b> อัตราความสำเร็จโดยรวมยังไม่ถึงเป้าหมาย (80%) ควรทบทวนขั้นตอนการรักษาและหาทางเพิ่มประสิทธิภาพ.</li>`;
+                    }
+
+                    if (parseFloat(overallLostToFollowUpPercentage) > 10) {
+                        analysisContent += `<li><b>ผู้ป่วยขาดการรักษาเยอะ:</b> มีผู้ป่วยจำนวนมากที่ขาดการติดตาม ซึ่งอาจทำให้การแพร่เชื้อยังคงอยู่ ควรมีการติดตามผู้ป่วยอย่างใกล้ชิดมากขึ้น เช่น การโทรศัพท์ หรือส่ง อสม. ไปเยี่ยม.</li>`;
+                    }
+
+                    if (parseFloat(overallDiedPercentage) > 5) {
+                        analysisContent += `<li><b>อัตราเสียชีวิตสูง:</b> ผู้ป่วยวัณโรคเสียชีวิตค่อนข้างมาก ควรตรวจสอบว่ามีสาเหตุใดที่สามารถป้องกันได้ และปรับปรุงการดูแลผู้ป่วยกลุ่มที่มีอาการหนักหรือมีโรคประจำตัว.</li>`;
+                    }
+                    analysisContent += `</ul><p>การปรับปรุงจุดที่พบปัญหาจะช่วยให้การควบคุมวัณโรคในจังหวัดนครสวรรค์ดีขึ้นได้.</p>`;
+                }
+
+
+                analysisParagraphs.innerHTML = analysisContent;
+
+            } catch (error) {
+                console.error("Error running AI analysis:", error);
+                analysisParagraphs.innerHTML = '<p style="color: red;">เกิดข้อผิดพลาดในการวิเคราะห์ข้อมูล. โปรดลองใหม่อีกครั้ง.</p><p style="color: red;">(ข้อผิดพลาดนี้อาจเกิดจากการจำลอง API หรือการเชื่อมต่อกับ AI Backend ที่ยังไม่ได้ตั้งค่า)</p>';
+            } finally {
+                loadingOverlay.style.display = 'none'; // Hide loading overlay
+            }
         }
 
         // เริ่มต้นการทำงานของแอปพลิเคชัน
@@ -850,6 +1159,9 @@
                 addLabelsToMap(allAggregatedData, document.getElementById('outcome-filter').value);
                 // Initial chart render with all raw data
                 renderStaticHospitalChart(rawGeojsonData);
+
+                // Initial AI analysis run after everything loads
+                runAIAnalysis(rawGeojsonData);
             }
         });
 
