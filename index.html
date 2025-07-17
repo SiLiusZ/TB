@@ -30,7 +30,7 @@
             text-align: center;
             color: #2c3e50;
             margin-top: 0;
-            font-size: 2.5em;
+            font-size: 1.5em;
         }
         #mapid {
             height: 500px;
@@ -225,7 +225,10 @@
                 padding: 10px;
             }
             h1 {
-                font-size: 2em;
+                font-size: 2em; /* Reduced for tablets */
+            }
+            #mapid {
+                height: 400px; /* Slightly reduce map height for tablets */
             }
             .controls {
                 position: relative;
@@ -253,12 +256,37 @@
                 gap: 10px;
             }
         }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.5em; /* Further reduce for very small phones */
+            }
+            #mapid {
+                height: 300px; /* Reduce map height significantly for phones */
+            }
+            .bar-label {
+                width: 80px; /* Further adjust label width */
+                font-size: 12px; /* Smaller font for labels */
+            }
+            .bar-segment {
+                font-size: 9px; /* Even smaller font for values */
+                padding: 0 2px;
+            }
+            .bar-body {
+                height: 20px; /* Slightly thinner bars */
+            }
+            .outcome-legend-item,
+            .bar-item {
+                font-size: 13px; /* Smaller general text */
+            }
+        }
     </style>
 </head>
 <body>
 
     <div class="container">
-            <h1>แผนที่แสดงจำนวนและข้อมูลผู้ป่วย</h1>
+            <h1>แผนที่แสดงจำนวนและข้อมูลผู้ป่วยวัณโรค ปีงบประมาณ 2568</h1>
+            <h1>จังหวัดนครสวรรค์</h1>
 
             <div id="mapid">
                     <div class="controls">
@@ -278,7 +306,7 @@
                 </div>
 
             <div id="chartContainer">
-                <h2>สัดส่วนผู้ป่วยตามผลการรักษาในแต่ละโรงพยาบาล (%)</h2>
+                <h2>ผลงานการรักษาสำเร็จของผู้ป่วยวัณโรคทุกประเภท (All type Success rate) ปีงบประมาณ 2568</h2>
                 <div id="outcomeChartLegend" class="outcome-legend">
                     </div>
                 <div id="staticHospitalChart" class="stacked-bar-chart">
