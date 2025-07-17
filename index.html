@@ -4,17 +4,14 @@
     <title>แผนที่แสดงข้อมูลผู้ป่วย</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
-    
     <style>
         body {
-            font-family: 'Kanit', sans-serif; /* Changed font to Kanit */
+            font-family: 'Kanit', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f0f2f5;
@@ -27,7 +24,7 @@
             background-color: #ffffff;
             padding: 20px;
             border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0,0,0,0.1);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
         h1 {
             text-align: center;
@@ -35,11 +32,12 @@
             margin-top: 0;
             font-size: 2.5em;
         }
-        #mapid { 
+        #mapid {
             height: 500px;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             position: relative;
+            margin-bottom: 20px; /* Space between map and chart */
         }
         .controls {
             position: absolute;
@@ -49,7 +47,7 @@
             background-color: rgba(255, 255, 255, 0.9);
             padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -75,7 +73,7 @@
         .info-box {
             background: white;
             padding: 10px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
             border-radius: 5px;
             font-size: 14px;
         }
@@ -85,7 +83,7 @@
             background: white;
             padding: 6px 8px;
             border-radius: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
         }
         .legend i {
             width: 18px;
@@ -97,16 +95,110 @@
         .map-label-div-icon {
             font-size: 12px;
             font-weight: bold;
-            color: #4a4a4a; /* Adjusted color for better visibility against map */
+            color: #4a4a4a;
             text-align: center;
-            line-height: 1.2; /* Adjusted line-height for multi-line text */
-            white-space: nowrap; /* Prevent wrapping for short names */
+            line-height: 1.2;
+            white-space: nowrap;
             border-radius: 4px;
-            padding: 3px 6px; /* Increased padding slightly */
-            background-color: rgba(255, 255, 255, 0.7); /* Semi-transparent background */
-            border: 1px solid #ccc; /* Subtle border */
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2); /* Small shadow for depth */
+            padding: 3px 6px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid #ccc;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
+        #chartContainer {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styles for the stacked horizontal bar chart */
+        .stacked-bar-chart {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 10px; /* Space between bars */
+            padding-top: 15px;
+        }
+        .bar-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            position: relative;
+        }
+        .bar-label {
+            flex-shrink: 0;
+            width: 150px; /* Fixed width for labels */
+            text-align: right;
+            padding-right: 10px;
+            font-weight: 500;
+            color: #555;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .bar-body {
+            flex-grow: 1;
+            height: 25px; /* Height of the bar */
+            border-radius: 4px;
+            display: flex;
+            overflow: hidden; /* Ensure rounded corners apply to children */
+            background-color: #e0e0e0; /* Fallback for 0% bars */
+        }
+        .bar-segment {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
+            font-size: 12px;
+            box-sizing: border-box;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: width 0.5s ease-out; /* Smooth transition */
+            padding: 0 3px; /* Small padding inside segments */
+            cursor: pointer; /* Added for tooltip indication */
+        }
+        .outcome-legend {
+            margin-top: 15px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .outcome-legend-item {
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+            color: #555;
+        }
+        .outcome-legend-item i {
+            width: 18px;
+            height: 18px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+
+
+        /* Define colors for each outcome */
+        .outcome-ChangeDiagnosis { background-color: #FF6347; /* Tomato */ }
+        .outcome-Completed { background-color: #4CAF50; /* Green */ }
+        .outcome-Cured { background-color: #2196F3; /* Blue */ }
+        .outcome-Died { background-color: #F44336; /* Red */ }
+        .outcome-LostToFollowUp { background-color: #FFC107; /* Amber */ }
+        .outcome-OnTreatment { background-color: #9C27B0; /* Purple */ }
+        .outcome-RRMDRBeforeMonth5 { background-color: #FF9800; /* Orange */ }
+        .outcome-TransferredOut { background-color: #607D8B; /* Blue Grey */ }
+        .outcome-Undefined { background-color: #B0BEC5; /* Light Blue Grey for 'ไม่ระบุ' */ } /* Added for 'ไม่ระบุ' */
+
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .container {
@@ -132,123 +224,156 @@
                 width: 100%;
                 box-sizing: border-box;
             }
+            .bar-label {
+                width: 100px; /* Adjust label width for smaller screens */
+            }
+            .bar-segment {
+                font-size: 10px; /* Smaller font for value on small screens */
+            }
+            .outcome-legend {
+                flex-direction: column;
+                gap: 10px;
+            }
         }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>แผนที่แสดงจำนวนและข้อมูลผู้ป่วย</h1>
+    <div class="container">
+            <h1>แผนที่แสดงจำนวนและข้อมูลผู้ป่วย</h1>
 
-    <div id="mapid">
-        <div class="controls">
-            <label for="district-filter">เลือกอำเภอ:</label>
-            <select id="district-filter">
-                <option value="ทั้งหมด">ทั้งหมด</option>
-            </select>
-            <label for="outcome-filter">ผลการรักษา:</label>
-            <select id="outcome-filter">
-                <option value="ทั้งหมด">ทั้งหมด</option>
-            </select>
-            <label for="hospital-filter">เลือกโรงพยาบาล:</label>
-            <select id="hospital-filter">
-                <option value="ทั้งหมด">ทั้งหมด</option>
-            </select>
-        </div>
+            <div id="mapid">
+                    <div class="controls">
+                        <label for="district-filter">เลือกอำเภอ:</label>
+                        <select id="district-filter">
+                                <option value="ทั้งหมด">ทั้งหมด</option>
+                            </select>
+                        <label for="outcome-filter">ผลการรักษา:</label>
+                        <select id="outcome-filter">
+                                <option value="ทั้งหมด">ทั้งหมด</option>
+                            </select>
+                        <label for="hospital-filter">เลือกโรงพยาบาล:</label>
+                        <select id="hospital-filter">
+                                <option value="ทั้งหมด">ทั้งหมด</option>
+                            </select>
+                        </div>
+                </div>
+
+            <div id="chartContainer">
+                <h2>สัดส่วนผู้ป่วยตามผลการรักษาในแต่ละโรงพยาบาล (%)</h2>
+                <div id="outcomeChartLegend" class="outcome-legend">
+                    </div>
+                <div id="staticHospitalChart" class="stacked-bar-chart">
+                    </div>
+            </div>
     </div>
-</div>
 
-<script>
-    const map = L.map('mapid').setView([13.7563, 100.5018], 6);
-    let geoJsonLayer;
-    let labelLayerGroup = L.featureGroup().addTo(map);
-    let allAggregatedData; // Stores aggregated data for all hospitals
-    let rawGeojsonData; // Stores the original, unaggregated GeoJSON data
-    let legend;
+    <script>
+        const map = L.map('mapid').setView([13.7563, 100.5018], 6);
+        let geoJsonLayer;
+        let labelLayerGroup = L.featureGroup().addTo(map);
+        let allAggregatedData; // Stores aggregated data for all hospitals
+        let rawGeojsonData; // Stores the original, unaggregated GeoJSON data
+        let legend;
 
-    L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(map);
+        // Define a mapping from outcome names to CSS class names for colors
+        // Ensure this list is exhaustive of all possible outcomes
+        const outcomeColorClasses = {
+            'Change diagnosis': 'outcome-ChangeDiagnosis',
+            'Completed': 'outcome-Completed',
+            'Cured': 'outcome-Cured',
+            'Died': 'outcome-Died',
+            'Lost to follow-up': 'outcome-LostToFollowUp',
+            'On treatment': 'outcome-OnTreatment',
+            'RR/MDR ก่อนเดือนที่ 5': 'outcome-RRMDRBeforeMonth5',
+            'Transferred out': 'outcome-TransferredOut',
+            'ไม่ระบุ': 'outcome-Undefined' // For cases where outcome is missing
+        };
 
-    const part1Url = 'final_data_reduced_part_1.geojson';
-    const part2Url = 'final_data_reduced_part_2.geojson';
-    
-    // โหลดและรวมไฟล์ GeoJSON ทั้งสองไฟล์
-    async function loadAndCombineGeoJSON() {
-        try {
-            const [response1, response2] = await Promise.all([
-                fetch(part1Url),
-                fetch(part2Url)
-            ]);
-            
-            if (!response1.ok || !response2.ok) {
-                throw new Error('ไม่สามารถดึงข้อมูลจากไฟล์ GeoJSON ได้');
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        const part1Url = 'final_data_reduced_part_1.geojson';
+        const part2Url = 'final_data_reduced_part_2.geojson';
+
+        // โหลดและรวมไฟล์ GeoJSON ทั้งสองไฟล์
+        async function loadAndCombineGeoJSON() {
+            try {
+                const [response1, response2] = await Promise.all([
+                    fetch(part1Url),
+                    fetch(part2Url)
+                ]);
+
+                if (!response1.ok || !response2.ok) {
+                    throw new Error('ไม่สามารถดึงข้อมูลจากไฟล์ GeoJSON ได้');
+                }
+
+                const data1 = await response1.json();
+                const data2 = await response2.json();
+                return {
+                    "type": "FeatureCollection",
+                    "features": [...data1.features, ...data2.features]
+                };
+            } catch (error) {
+                console.error("เกิดข้อผิดพลาดในการโหลดหรือรวมไฟล์:", error);
+                return null;
             }
-            
-            const data1 = await response1.json();
-            const data2 = await response2.json();
+        }
+
+        // รวมข้อมูลผู้ป่วยตาม จังหวัด-อำเภอ-ตำบล
+        function aggregateData(geojsonData) {
+            const aggregatedFeatures = {};
+            geojsonData.features.forEach(feature => {
+                const props = feature.properties;
+                const geoKey = `${props['จังหวัด']}-${props['อำเภอ']}-${props['ตำบล']}`;
+                // Use 'ไม่ระบุ' if outcome is null or undefined
+                const outcome = props['ผลการรักษา'] || 'ไม่ระบุ';
+
+                if (!aggregatedFeatures[geoKey]) {
+                    aggregatedFeatures[geoKey] = {
+                        type: 'Feature',
+                        geometry: feature.geometry,
+                        properties: {
+                            'จังหวัด': props['จังหวัด'],
+                            'อำเภอ': props['อำเภอ'],
+                            'ตำบล': props['ตำบล'],
+                            'total_count': 0,
+                            'outcome_counts': {}
+                        }
+                    };
+                }
+
+                aggregatedFeatures[geoKey].properties.total_count++;
+
+                if (!aggregatedFeatures[geoKey].properties.outcome_counts[outcome]) {
+                    aggregatedFeatures[geoKey].properties.outcome_counts[outcome] = 0;
+                }
+                aggregatedFeatures[geoKey].properties.outcome_counts[outcome]++;
+            });
+
             return {
                 "type": "FeatureCollection",
-                "features": [...data1.features, ...data2.features]
+                "features": Object.values(aggregatedFeatures)
             };
-        } catch (error) {
-            console.error("เกิดข้อผิดพลาดในการโหลดหรือรวมไฟล์:", error);
-            return null;
         }
-    }
 
-    // รวมข้อมูลผู้ป่วยตาม จังหวัด-อำเภอ-ตำบล
-    function aggregateData(geojsonData) {
-        const aggregatedFeatures = {};
-        geojsonData.features.forEach(feature => {
+        // กำหนดสีตามจำนวนผู้ป่วย (สำหรับแผนที่)
+        function getColorForCount(count) {
+            return count > 50 ? '#800026' :
+                count > 20 ? '#BD0026' :
+                    count > 10 ? '#E31A1C' :
+                        count > 5 ? '#FC4E2A' :
+                            count > 2 ? '#FD8D3C' :
+                                count > 0 ? '#FED976' :
+                                    '#f0f0f0';
+        }
+
+        // สร้าง popup สำหรับแต่ละ feature (แค่ bind popup ไม่ใส่ event hover)
+        function onEachFeature(feature, layer) {
             const props = feature.properties;
-            const geoKey = `${props['จังหวัด']}-${props['อำเภอ']}-${props['ตำบล']}`;
-            const outcome = props['ผลการรักษา'] || 'ไม่ระบุ';
-
-            if (!aggregatedFeatures[geoKey]) {
-                aggregatedFeatures[geoKey] = {
-                    type: 'Feature',
-                    geometry: feature.geometry,
-                    properties: {
-                        'จังหวัด': props['จังหวัด'],
-                        'อำเภอ': props['อำเภอ'],
-                        'ตำบล': props['ตำบล'],
-                        'total_count': 0,
-                        'outcome_counts': {}
-                    }
-                };
-            }
-            
-            aggregatedFeatures[geoKey].properties.total_count++;
-            
-            if (!aggregatedFeatures[geoKey].properties.outcome_counts[outcome]) {
-                aggregatedFeatures[geoKey].properties.outcome_counts[outcome] = 0;
-            }
-            aggregatedFeatures[geoKey].properties.outcome_counts[outcome]++;
-        });
-
-        return {
-            "type": "FeatureCollection",
-            "features": Object.values(aggregatedFeatures)
-        };
-    }
-
-    // กำหนดสีตามจำนวนผู้ป่วย
-    function getColorForCount(count) {
-        return count > 50 ? '#800026' :
-               count > 20 ? '#BD0026' :
-               count > 10 ? '#E31A1C' :
-               count > 5  ? '#FC4E2A' :
-               count > 2  ? '#FD8D3C' :
-               count > 0  ? '#FED976' :
-                            '#f0f0f0';
-    }
-
-    // สร้าง popup สำหรับแต่ละ feature (แค่ bind popup ไม่ใส่ event hover)
-    function onEachFeature(feature, layer) {
-        const props = feature.properties;
-        const totalCount = props['total_count'];
-        let popupContent = `
+            const totalCount = props['total_count'];
+            let popupContent = `
             <b>จังหวัด:</b> ${props['จังหวัด']}<br>
             <b>อำเภอ:</b> ${props['อำเภอ']}<br>
             <b>ตำบล:</b> ${props['ตำบล']}<br>
@@ -257,248 +382,363 @@
             <hr>
             <b>แบ่งตามผลการรักษา:</b><br>
         `;
-        
-        const sortedOutcomes = Object.keys(props.outcome_counts).sort();
-        for (const outcome of sortedOutcomes) {
-            const outcomeCount = props.outcome_counts[outcome] || 0;
-            const percentage = totalCount > 0 ? ((outcomeCount / totalCount) * 100).toFixed(1) : 0;
-            popupContent += `• ${outcome}: ${outcomeCount} ราย (${percentage}%)<br>`;
-        }
 
-        layer.bindPopup(popupContent);
-    }
-
-    // สร้าง Dropdown สำหรับอำเภอ
-    function createDistrictFilter(districts) {
-        const selectElement = document.getElementById('district-filter');
-        districts.forEach(district => {
-            const option = document.createElement('option');
-            option.value = district;
-            option.textContent = district;
-            selectElement.appendChild(option);
-        });
-        selectElement.addEventListener('change', applyFilters);
-    }
-
-    // สร้าง Dropdown สำหรับผลการรักษา
-    function createOutcomeFilter(outcomes) {
-        const selectElement = document.getElementById('outcome-filter');
-        outcomes.forEach(outcome => {
-            const option = document.createElement('option');
-            option.value = outcome;
-            option.textContent = outcome;
-            selectElement.appendChild(option);
-        });
-        selectElement.addEventListener('change', applyFilters);
-    }
-
-    // สร้าง Dropdown สำหรับโรงพยาบาล
-    function createHospitalFilter(hospitals) {
-        const selectElement = document.getElementById('hospital-filter');
-        hospitals.forEach(hospital => {
-            const option = document.createElement('option');
-            option.value = hospital;
-            option.textContent = hospital;
-            selectElement.appendChild(option);
-        });
-        selectElement.addEventListener('change', applyFilters);
-    }
-
-    // อัพเดท Legend บนแผนที่
-    function updateLegend(selectedOutcome) {
-        if (legend) {
-            legend.remove();
-        }
-        
-        legend = L.control({ position: 'bottomright' });
-        legend.onAdd = function(map) {
-            const div = L.DomUtil.create('div', 'info-box legend');
-            const grades = [0, 2, 5, 10, 20, 50];
-            const legendTitle = selectedOutcome === 'ทั้งหมด' ? 'จำนวนผู้ป่วย' : `จำนวนผู้ป่วย (${selectedOutcome})`;
-            
-            div.innerHTML = `<b>${legendTitle}</b><br>`;
-            for (let i = 0; i < grades.length; i++) {
-                div.innerHTML +=
-                    '<div><i style="background:' + getColorForCount(grades[i] + 1) + '"></i> ' +
-                    grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '</div>';
+            const sortedOutcomes = Object.keys(props.outcome_counts).sort();
+            for (const outcome of sortedOutcomes) {
+                const outcomeCount = props.outcome_counts[outcome] || 0;
+                const percentage = totalCount > 0 ? ((outcomeCount / totalCount) * 100).toFixed(1) : 0;
+                popupContent += `• ${outcome}: ${outcomeCount} ราย (${percentage}%)<br>`;
             }
-            return div;
-        };
-        legend.addTo(map);
-    }
 
-    // เพิ่มป้ายกำกับจำนวนผู้ป่วยและชื่อตำบลบนแผนที่
-    function addLabelsToMap(geoJsonData, selectedOutcome) {
-        labelLayerGroup.clearLayers(); // Clear existing labels
-
-        // Only show labels if an specific outcome is selected (not 'ทั้งหมด')
-        if (selectedOutcome === 'ทั้งหมด') {
-            return; 
+            layer.bindPopup(popupContent);
         }
 
-        geoJsonData.features.forEach(feature => {
-            const props = feature.properties;
-            let labelText;
-            let count = props.outcome_counts[selectedOutcome] || 0;
+        // สร้าง Dropdown สำหรับอำเภอ
+        function createDistrictFilter(districts) {
+            const selectElement = document.getElementById('district-filter');
+            districts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district;
+                option.textContent = district;
+                selectElement.appendChild(option);
+            });
+            selectElement.addEventListener('change', applyFilters);
+        }
 
-            // Only create label if count for the selected outcome is greater than 0
-            if (count > 0) { 
-                const totalCountInTambon = props.total_count;
-                const percentage = totalCountInTambon > 0 ? ((count / totalCountInTambon) * 100).toFixed(1) : 0;
-                labelText = `${props['ตำบล']}<br>(${count} ราย, ${percentage}%)`;
-            
-                const centroid = L.geoJSON(feature.geometry).getBounds().getCenter();
-                const labelIcon = L.divIcon({
-                    className: 'map-label-div-icon',
-                    html: labelText,
-                    iconSize: [0, 0], // Let content size the icon
-                    iconAnchor: [0, 0] // Centered by CSS transform
-                });
+        // สร้าง Dropdown สำหรับผลการรักษา
+        function createOutcomeFilter(outcomes) {
+            const selectElement = document.getElementById('outcome-filter');
+            outcomes.forEach(outcome => {
+                const option = document.createElement('option');
+                option.value = outcome;
+                option.textContent = outcome;
+                selectElement.appendChild(option);
+            });
+            selectElement.addEventListener('change', applyFilters);
+        }
 
-                // Using L.marker with custom divIcon for labels
-                L.marker(centroid, { icon: labelIcon }).addTo(labelLayerGroup);
+        // สร้าง Dropdown สำหรับโรงพยาบาล
+        function createHospitalFilter(hospitals) {
+            const selectElement = document.getElementById('hospital-filter');
+            hospitals.forEach(hospital => {
+                const option = document.createElement('option');
+                option.value = hospital;
+                option.textContent = hospital;
+                selectElement.appendChild(option);
+            });
+            selectElement.addEventListener('change', applyFilters);
+        }
+
+        // อัพเดท Legend บนแผนที่
+        function updateLegend(selectedOutcome) {
+            if (legend) {
+                legend.remove();
             }
-        });
-    }
-    
-    // ฟังก์ชันหลักในการกรองและอัพเดทแผนที่
-    function applyFilters() {
-        const selectedDistrict = document.getElementById('district-filter').value;
-        const selectedOutcome = document.getElementById('outcome-filter').value;
-        const selectedHospital = document.getElementById('hospital-filter').value;
 
-        if (geoJsonLayer) {
-            map.removeLayer(geoJsonLayer);
-        }
+            legend = L.control({ position: 'bottomright' });
+            legend.onAdd = function (map) {
+                const div = L.DomUtil.create('div', 'info-box legend');
+                const grades = [1, 2, 5, 10, 20, 50];
+                const legendTitle = selectedOutcome === 'ทั้งหมด' ? 'จำนวนผู้ป่วย' : `จำนวนผู้ป่วย (${selectedOutcome})`;
 
-        let dataToProcess = rawGeojsonData.features; // Start with all raw data
-
-        // Filter by hospital first, if selected
-        if (selectedHospital !== 'ทั้งหมด') {
-            dataToProcess = dataToProcess.filter(feature =>
-                feature.properties['โรงพยาบาล'] === selectedHospital
-            );
-        }
-
-        // Aggregate the (potentially) hospital-filtered raw data
-        let currentAggregatedData = aggregateData({ type: 'FeatureCollection', features: dataToProcess });
-
-        let filteredFeatures = currentAggregatedData.features; // Use this aggregated data for further filtering
-
-        if (selectedDistrict !== 'ทั้งหมด') {
-            filteredFeatures = filteredFeatures.filter(feature => 
-                feature.properties['อำเภอ'] === selectedDistrict
-            );
-        }
-        
-        const newStyle = function(feature) {
-            let count;
-            if (selectedOutcome === 'ทั้งหมด') {
-                count = feature.properties.total_count;
-            } else {
-                count = feature.properties.outcome_counts[selectedOutcome] || 0;
-            }
-            
-            return {
-                color: "#ffffff",
-                weight: 1.5,
-                opacity: 0.8,
-                fillColor: getColorForCount(count),
-                fillOpacity: 0.6
+                div.innerHTML = `<b>${legendTitle}</b><br>`;
+                for (let i = 0; i < grades.length; i++) {
+                    div.innerHTML +=
+                        '<div><i style="background:' + getColorForCount(grades[i] + 1) + '"></i> ' +
+                        grades[i] + (grades[i + 1] ? '&ndash;' + grades[i + 1] + '<br>' : '+') + '</div>';
+                }
+                return div;
             };
-        };
+            legend.addTo(map);
+        }
 
-        const filteredGeoJSON = {
-            "type": "FeatureCollection",
-            "features": filteredFeatures
-        };
+        // เพิ่มป้ายกำกับจำนวนผู้ป่วยและชื่อตำบลบนแผนที่
+        function addLabelsToMap(geoJsonData, selectedOutcome) {
+            labelLayerGroup.clearLayers(); // Clear existing labels
 
-        geoJsonLayer = L.geoJSON(filteredGeoJSON, {
-            style: newStyle,
-            onEachFeature: onEachFeature
-        }).addTo(map);
+            // Only show labels if an specific outcome is selected (not 'ทั้งหมด')
+            if (selectedOutcome === 'ทั้งหมด') {
+                return;
+            }
 
-        // Conditionally add hover events for popups if outcome filter is 'ทั้งหมด'
-        if (selectedOutcome === 'ทั้งหมด') {
-            geoJsonLayer.eachLayer(function(layer) {
-                layer.on({
-                    mouseover: function(e) {
-                        this.openPopup();
-                    },
-                    mouseout: function(e) {
-                        this.closePopup();
+            geoJsonData.features.forEach(feature => {
+                const props = feature.properties;
+                let labelText;
+                let count = props.outcome_counts[selectedOutcome] || 0;
+
+                // Only create label if count for the selected outcome is greater than 0
+                if (count > 0) {
+                    const totalCountInTambon = props.total_count;
+                    const percentage = totalCountInTambon > 0 ? ((count / totalCountInTambon) * 100).toFixed(1) : 0;
+                    labelText = `${props['ตำบล']}<br>(${count} ราย, ${percentage}%)`;
+
+                    const centroid = L.geoJSON(feature.geometry).getBounds().getCenter();
+                    const labelIcon = L.divIcon({
+                        className: 'map-label-div-icon',
+                        html: labelText,
+                        iconSize: [0, 0], // Let content size the icon
+                        iconAnchor: [0, 0] // Centered by CSS transform
+                    });
+
+                    // Using L.marker with custom divIcon for labels
+                    L.marker(centroid, { icon: labelIcon }).addTo(labelLayerGroup);
+                }
+            });
+        }
+
+        // ฟังก์ชันสำหรับเตรียมข้อมูลและสร้าง/อัพเดทกราฟแท่งแนวนอน (Stacked)
+        function renderStaticHospitalChart(data) {
+            const hospitalOutcomeCounts = {}; // { hospitalName: { outcome1: count, outcome2: count, ... }, ... }
+            const allOutcomesPresent = new Set(); // To collect all unique outcomes for the legend
+
+            data.features.forEach(feature => {
+                const hospital = feature.properties['โรงพยาบาล'] || 'ไม่ระบุ';
+                const outcome = feature.properties['ผลการรักษา'] || 'ไม่ระบุ';
+
+                if (!hospitalOutcomeCounts[hospital]) {
+                    hospitalOutcomeCounts[hospital] = { total: 0 };
+                }
+                if (!hospitalOutcomeCounts[hospital][outcome]) {
+                    hospitalOutcomeCounts[hospital][outcome] = 0;
+                }
+
+                hospitalOutcomeCounts[hospital][outcome]++;
+                hospitalOutcomeCounts[hospital].total++;
+                allOutcomesPresent.add(outcome);
+            });
+
+            // Sort hospitals by total patient count in descending order
+            const sortedHospitals = Object.entries(hospitalOutcomeCounts).sort(([, countsA], [, countsB]) => countsB.total - countsA.total);
+
+            const chartContainer = document.getElementById('staticHospitalChart');
+            chartContainer.innerHTML = ''; // Clear existing bars
+
+            if (sortedHospitals.length === 0) {
+                chartContainer.innerHTML = '<p style="text-align: center; color: #777;">ไม่มีข้อมูลผู้ป่วยสำหรับโรงพยาบาล</p>';
+                document.getElementById('outcomeChartLegend').innerHTML = ''; // Clear legend too
+                return;
+            }
+
+            // Render chart bars
+            sortedHospitals.forEach(([hospitalName, outcomeCounts]) => {
+                const barItem = document.createElement('div');
+                barItem.classList.add('bar-item');
+
+                const barLabel = document.createElement('div');
+                barLabel.classList.add('bar-label');
+                barLabel.textContent = hospitalName;
+                barItem.appendChild(barLabel);
+
+                const barBody = document.createElement('div');
+                barBody.classList.add('bar-body');
+
+                // Sort outcomes alphabetically for consistent display within bars
+                const sortedOutcomes = Array.from(allOutcomesPresent).sort();
+
+                sortedOutcomes.forEach(outcome => {
+                    const count = outcomeCounts[outcome] || 0;
+                    const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
+
+                    if (percentage > 0) { // Only create segment if there's data for it
+                        const barSegment = document.createElement('div');
+                        barSegment.classList.add('bar-segment');
+                        barSegment.classList.add(outcomeColorClasses[outcome] || 'outcome-Undefined'); // Apply color class
+                        barSegment.style.width = `${percentage}%`;
+                        barSegment.title = `${outcome}: ${count} ราย (${percentage}%)`; // Tooltip
+                        // Always show percentage for segments with value > 0
+                        barSegment.textContent = `${percentage}%`;
+
+
+                        barBody.appendChild(barSegment);
                     }
                 });
+
+                barItem.appendChild(barBody);
+                chartContainer.appendChild(barItem);
+            });
+
+            // Render chart legend (call separately to ensure all unique outcomes are collected)
+            renderOutcomeChartLegend(Array.from(allOutcomesPresent).sort());
+        }
+
+        // Function to render the legend for the stacked bar chart
+        function renderOutcomeChartLegend(outcomes) {
+            const legendContainer = document.getElementById('outcomeChartLegend');
+            legendContainer.innerHTML = ''; // Clear existing legend
+
+            if (outcomes.length === 0) {
+                return;
+            }
+
+            outcomes.forEach(outcome => {
+                const legendItem = document.createElement('div');
+                legendItem.classList.add('outcome-legend-item');
+
+                const colorBox = document.createElement('i');
+                colorBox.classList.add(outcomeColorClasses[outcome] || 'outcome-Undefined'); // Apply color class
+                legendItem.appendChild(colorBox);
+
+                const label = document.createElement('span');
+                label.textContent = outcome;
+                legendItem.appendChild(label);
+
+                legendContainer.appendChild(legendItem);
             });
         }
 
-        if (filteredFeatures.length > 0) {
-            map.fitBounds(geoJsonLayer.getBounds());
-        }
-        
-        updateLegend(selectedOutcome);
-        addLabelsToMap(filteredGeoJSON, selectedOutcome); // Update labels after filtering
-    }
 
-    // เริ่มต้นการทำงานของแอปพลิเคชัน
-    loadAndCombineGeoJSON().then(geojsonData => {
-        if (geojsonData) {
-            rawGeojsonData = geojsonData; // Store raw data
-            allAggregatedData = aggregateData(geojsonData); // Aggregate all data for initial 'ทั้งหมด' state
-            
-            const districts = [...new Set(allAggregatedData.features.map(f => f.properties['อำเภอ']))].sort();
-            
-            const allOutcomes = new Set();
-            allAggregatedData.features.forEach(feature => {
-                Object.keys(feature.properties['outcome_counts']).forEach(outcome => {
-                    allOutcomes.add(outcome);
-                });
-            });
-            const outcomes = [...allOutcomes].sort();
+        // ฟังก์ชันหลักในการกรองและอัพเดทแผนที่
+        function applyFilters() {
+            const selectedDistrict = document.getElementById('district-filter').value;
+            const selectedOutcome = document.getElementById('outcome-filter').value;
+            const selectedHospital = document.getElementById('hospital-filter').value;
 
-            const hospitals = [...new Set(rawGeojsonData.features.map(f => f.properties['โรงพยาบาล']))].sort(); // Extract hospitals from raw data
-            
-            createDistrictFilter(districts);
-            createOutcomeFilter(outcomes);
-            createHospitalFilter(hospitals); // Create hospital filter
-            
-            // Initial map load uses all aggregated data
-            geoJsonLayer = L.geoJSON(allAggregatedData, {
-                style: function(feature) {
-                    return {
-                        color: "#ffffff",
-                        weight: 1.5,
-                        opacity: 0.8,
-                        fillColor: getColorForCount(feature.properties.total_count),
-                        fillOpacity: 0.6
-                    };
-                },
+            if (geoJsonLayer) {
+                map.removeLayer(geoJsonLayer);
+            }
+
+            let dataToProcessForMap = rawGeojsonData.features; // Start with all raw data for map
+            let dataToProcessForChart = rawGeojsonData.features; // Start with all raw data for chart
+
+            // Filter for chart: Apply Hospital filter first
+            if (selectedHospital !== 'ทั้งหมด') {
+                dataToProcessForChart = dataToProcessForChart.filter(feature =>
+                    feature.properties['โรงพยาบาล'] === selectedHospital
+                );
+            }
+
+            // Filter for map: Apply all filters to raw data before aggregation for map display
+            if (selectedHospital !== 'ทั้งหมด') {
+                dataToProcessForMap = dataToProcessForMap.filter(feature =>
+                    feature.properties['โรงพยาบาล'] === selectedHospital
+                );
+            }
+            if (selectedDistrict !== 'ทั้งหมด') {
+                dataToProcessForMap = dataToProcessForMap.filter(feature =>
+                    feature.properties['อำเภอ'] === selectedDistrict
+                );
+            }
+            // For the map, we aggregate after district/hospital filter
+            let currentAggregatedDataForMap = aggregateData({ type: 'FeatureCollection', features: dataToProcessForMap });
+
+            let filteredFeaturesForMap = currentAggregatedDataForMap.features;
+
+            const newStyle = function (feature) {
+                let count;
+                if (selectedOutcome === 'ทั้งหมด') {
+                    count = feature.properties.total_count;
+                } else {
+                    count = feature.properties.outcome_counts[selectedOutcome] || 0;
+                }
+
+                return {
+                    color: "#ffffff",
+                    weight: 1.5,
+                    opacity: 0.8,
+                    fillColor: getColorForCount(count),
+                    fillOpacity: 0.6
+                };
+            };
+
+            const filteredGeoJSONForMap = {
+                "type": "FeatureCollection",
+                "features": filteredFeaturesForMap
+            };
+
+            geoJsonLayer = L.geoJSON(filteredGeoJSONForMap, {
+                style: newStyle,
                 onEachFeature: onEachFeature
             }).addTo(map);
 
-            // Add hover events for popups on initial load (since outcome filter is 'ทั้งหมด')
-            geoJsonLayer.eachLayer(function(layer) {
-                layer.on({
-                    mouseover: function(e) {
-                        this.openPopup();
-                    },
-                    mouseout: function(e) {
-                        this.closePopup();
-                    }
+            // Conditionally add hover events for popups if outcome filter is 'ทั้งหมด'
+            if (selectedOutcome === 'ทั้งหมด') {
+                geoJsonLayer.eachLayer(function (layer) {
+                    layer.on({
+                        mouseover: function (e) {
+                            this.openPopup();
+                        },
+                        mouseout: function (e) {
+                            this.closePopup();
+                        }
+                    });
                 });
-            });
+            } else { // Remove hover events if a specific outcome is selected
+                geoJsonLayer.eachLayer(function (layer) {
+                    layer.off('mouseover');
+                    layer.off('mouseout');
+                });
+            }
 
 
-            map.fitBounds(geoJsonLayer.getBounds());
-            
-            updateLegend('ทั้งหมด');
-            // Initial call to addLabelsToMap, checks current filter state
-            addLabelsToMap(allAggregatedData, document.getElementById('outcome-filter').value); 
+            if (filteredFeaturesForMap.length > 0) {
+                map.fitBounds(geoJsonLayer.getBounds());
+            }
+
+            updateLegend(selectedOutcome);
+            addLabelsToMap(filteredGeoJSONForMap, selectedOutcome); // Update labels after filtering
+            renderStaticHospitalChart({ type: 'FeatureCollection', features: dataToProcessForChart }); // Update chart based on currently filtered raw data
         }
-    });
 
-    L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
-</script>
+        // เริ่มต้นการทำงานของแอปพลิเคชัน
+        loadAndCombineGeoJSON().then(geojsonData => {
+            if (geojsonData) {
+                rawGeojsonData = geojsonData; // Store raw data
+                allAggregatedData = aggregateData(geojsonData); // Aggregate all data for initial 'ทั้งหมด' state
+
+                const districts = [...new Set(allAggregatedData.features.map(f => f.properties['อำเภอ']))].sort();
+
+                const allOutcomes = new Set();
+                rawGeojsonData.features.forEach(feature => { // Get all outcomes from raw data
+                    const outcome = feature.properties['ผลการรักษา'] || 'ไม่ระบุ';
+                    allOutcomes.add(outcome);
+                });
+                const outcomes = [...allOutcomes].sort();
+
+                const hospitals = [...new Set(rawGeojsonData.features.map(f => f.properties['โรงพยาบาล']))].sort(); // Extract hospitals from raw data
+
+                createDistrictFilter(districts);
+                createOutcomeFilter(outcomes);
+                createHospitalFilter(hospitals); // Create hospital filter
+
+                // Initial map load uses all aggregated data
+                geoJsonLayer = L.geoJSON(allAggregatedData, {
+                    style: function (feature) {
+                        return {
+                            color: "#ffffff",
+                            weight: 1.5,
+                            opacity: 0.8,
+                            fillColor: getColorForCount(feature.properties.total_count),
+                            fillOpacity: 0.6
+                        };
+                    },
+                    onEachFeature: onEachFeature
+                }).addTo(map);
+
+                // Add hover events for popups on initial load (since outcome filter is 'ทั้งหมด')
+                geoJsonLayer.eachLayer(function (layer) {
+                    layer.on({
+                        mouseover: function (e) {
+                            this.openPopup();
+                        },
+                        mouseout: function (e) {
+                            this.closePopup();
+                        }
+                    });
+                });
+
+
+                map.fitBounds(geoJsonLayer.getBounds());
+
+                updateLegend('ทั้งหมด');
+                // Initial call to addLabelsToMap, checks current filter state
+                addLabelsToMap(allAggregatedData, document.getElementById('outcome-filter').value);
+                // Initial chart render with all raw data
+                renderStaticHospitalChart(rawGeojsonData);
+            }
+        });
+
+        L.control.scale({ imperial: false, position: 'bottomleft' }).addTo(map);
+    </script>
 
 </body>
 </html>
