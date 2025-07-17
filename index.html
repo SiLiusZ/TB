@@ -145,6 +145,7 @@
             display: flex;
             overflow: hidden; /* Ensure rounded corners apply to children */
             background-color: #e0e0e0; /* Fallback for 0% bars */
+            cursor: pointer; /* Added for tooltip indication on the whole bar */
         }
         .bar-segment {
             height: 100%;
@@ -161,7 +162,6 @@
             text-overflow: ellipsis;
             transition: width 0.5s ease-out; /* Smooth transition */
             padding: 0 3px; /* Small padding inside segments */
-            cursor: pointer; /* Added for tooltip indication */
         }
         .outcome-legend {
             margin-top: 15px;
@@ -186,6 +186,24 @@
             border-radius: 3px;
         }
 
+        /* Styles for Custom Tooltip */
+        #customTooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            pointer-events: none; /* Allows mouse events to pass through */
+            opacity: 0; /* Initially hidden */
+            transition: opacity 0.2s ease-in-out;
+            z-index: 9999; /* Ensure it's on top */
+            white-space: pre-line; /* Allow text wrapping for multiple lines */
+            text-align: left;
+        }
+        #customTooltip.show {
+            opacity: 1;
+        }
 
         /* Define colors for each outcome */
         .outcome-ChangeDiagnosis { background-color: #FF6347; /* Tomato */ }
@@ -266,7 +284,9 @@
                 <div id="staticHospitalChart" class="stacked-bar-chart">
                     </div>
             </div>
+
     </div>
+    <div id="customTooltip"></div>
 
     <script>
         const map = L.map('mapid').setView([13.7563, 100.5018], 6);
@@ -275,6 +295,8 @@
         let allAggregatedData; // Stores aggregated data for all hospitals
         let rawGeojsonData; // Stores the original, unaggregated GeoJSON data
         let legend;
+        const customTooltip = document.getElementById('customTooltip');
+
 
         // Define a mapping from outcome names to CSS class names for colors
         // Ensure this list is exhaustive of all possible outcomes
@@ -328,7 +350,7 @@
                 const props = feature.properties;
                 const geoKey = `${props['จังหวัด']}-${props['อำเภอ']}-${props['ตำบล']}`;
                 // Use 'ไม่ระบุ' if outcome is null or undefined
-                const outcome = props['ผลการรักษา'] || 'ไม่ระบุ';
+                const outcome = props['ผลการรักษา'] || 'ไม่ระระบุ'; // Fixed typo here
 
                 if (!aggregatedFeatures[geoKey]) {
                     aggregatedFeatures[geoKey] = {
@@ -532,6 +554,23 @@
                 const barBody = document.createElement('div');
                 barBody.classList.add('bar-body');
 
+                // Add event listeners for custom tooltip to the whole barBody
+                barBody.addEventListener('mouseover', (e) => {
+                    let tooltipText = `<b>${hospitalName}</b><br>ยอดรวมผู้ป่วย: ${outcomeCounts.total} ราย<br><br>แบ่งตามผลการรักษา:<br>`;
+                    const sortedOutcomesForTooltip = Object.keys(outcomeCounts).filter(k => k !== 'total').sort();
+                    for (const outcome of sortedOutcomesForTooltip) {
+                        const count = outcomeCounts[outcome] || 0;
+                        const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
+                        tooltipText += `• ${outcome}: ${count} ราย (${percentage}%)<br>`;
+                    }
+                    showTooltip(e, tooltipText);
+                });
+                barBody.addEventListener('mouseout', hideTooltip);
+                barBody.addEventListener('mousemove', (e) => {
+                    moveTooltip(e);
+                });
+
+
                 // Sort outcomes alphabetically for consistent display within bars
                 const sortedOutcomes = Array.from(allOutcomesPresent).sort();
 
@@ -544,10 +583,9 @@
                         barSegment.classList.add('bar-segment');
                         barSegment.classList.add(outcomeColorClasses[outcome] || 'outcome-Undefined'); // Apply color class
                         barSegment.style.width = `${percentage}%`;
-                        barSegment.title = `${outcome}: ${count} ราย (${percentage}%)`; // Tooltip
-                        // Always show percentage for segments with value > 0
-                        barSegment.textContent = `${percentage}%`;
 
+                        // Display percentage for segments with value > 0
+                        barSegment.textContent = `${percentage}%`;
 
                         barBody.appendChild(barSegment);
                     }
@@ -559,6 +597,56 @@
 
             // Render chart legend (call separately to ensure all unique outcomes are collected)
             renderOutcomeChartLegend(Array.from(allOutcomesPresent).sort());
+        }
+
+        // Function to show custom tooltip
+        function showTooltip(event, text) {
+            customTooltip.innerHTML = text; // Use innerHTML to allow for HTML in tooltip
+            customTooltip.classList.add('show');
+            moveTooltip(event);
+        }
+
+        // Function to move custom tooltip
+        function moveTooltip(event) {
+            // Position tooltip relative to mouse cursor
+            const xOffset = 15; // Offset from cursor to prevent blocking
+            const yOffset = 15;
+
+            // Get boundaries of the chart container to prevent tooltip from going off-screen
+            const chartRect = document.getElementById('chartContainer').getBoundingClientRect();
+            const tooltipRect = customTooltip.getBoundingClientRect();
+
+            // *** IMPORTANT CHANGE: Add scroll position to clientX/Y ***
+            let newX = event.clientX + window.scrollX + xOffset;
+            let newY = event.clientY + window.scrollY + yOffset;
+
+            // Adjust X if tooltip goes off right edge
+            // Check against document.documentElement.clientWidth (viewport width)
+            if (newX + tooltipRect.width > document.documentElement.clientWidth - 20 + window.scrollX) { // -20 for a small margin
+                newX = event.clientX + window.scrollX - tooltipRect.width - xOffset;
+            }
+            // Adjust Y if tooltip goes off bottom edge
+            // Check against document.documentElement.clientHeight (viewport height)
+            if (newY + tooltipRect.height > document.documentElement.clientHeight - 20 + window.scrollY) { // -20 for a small margin
+                newY = event.clientY + window.scrollY - tooltipRect.height - yOffset;
+            }
+             // Ensure tooltip doesn't go off the left edge
+            if (newX < window.scrollX) { // Don't go past left edge of scroll
+                newX = window.scrollX;
+            }
+            // Ensure tooltip doesn't go off the top edge
+            if (newY < window.scrollY) { // Don't go past top edge of scroll
+                newY = window.scrollY;
+            }
+
+            customTooltip.style.left = `${newX}px`;
+            customTooltip.style.top = `${newY}px`;
+        }
+
+        // Function to hide custom tooltip
+        function hideTooltip() {
+            customTooltip.classList.remove('show');
+            customTooltip.innerHTML = ''; // Clear text
         }
 
         // Function to render the legend for the stacked bar chart
