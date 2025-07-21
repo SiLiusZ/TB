@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <title>แผนที่แสดงข้อมูลผู้ป่วย</title>
     <meta charset="utf-8" />
@@ -17,6 +18,7 @@
             background-color: #f0f2f5;
             color: #333;
         }
+
         .container {
             width: 95%;
             max-width: 1200px;
@@ -26,30 +28,39 @@
             border-radius: 12px;
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             text-align: center;
             color: #2c3e50;
             margin-top: 0;
-            font-size: 1.5em; /* Adjusted for better responsiveness */
+            font-size: 1.5em;
+            /* Adjusted for better responsiveness */
         }
+
         /* Adjusted .controls style for external placement */
         .controls {
             background-color: rgba(255, 255, 255, 0.9);
-            padding: 15px; /* Increased padding */
+            padding: 15px;
+            /* Increased padding */
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             display: flex;
-            justify-content: center; /* Center horizontally */
+            justify-content: center;
+            /* Center horizontally */
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
-            margin-bottom: 20px; /* Space between controls and map */
-            border: 1px solid #eee; /* Slight border for definition */
+            margin-bottom: 20px;
+            /* Space between controls and map */
+            border: 1px solid #eee;
+            /* Slight border for definition */
         }
+
         .controls label {
             font-weight: bold;
             color: #555;
         }
+
         .controls select {
             padding: 8px 12px;
             border-radius: 6px;
@@ -59,16 +70,21 @@
             outline: none;
             transition: border-color 0.3s;
         }
+
         .controls select:focus {
             border-color: #3498db;
         }
+
         #mapid {
             height: 500px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: relative; /* Keep relative for inner Leaflet elements */
-            margin-bottom: 20px; /* Space between map and chart */
+            position: relative;
+            /* Keep relative for inner Leaflet elements */
+            margin-bottom: 20px;
+            /* Space between map and chart */
         }
+
         .info-box {
             background: white;
             padding: 10px;
@@ -76,6 +92,7 @@
             border-radius: 5px;
             font-size: 14px;
         }
+
         .legend {
             line-height: 18px;
             color: #555;
@@ -84,6 +101,7 @@
             border-radius: 5px;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
         }
+
         .legend i {
             width: 18px;
             height: 18px;
@@ -91,6 +109,7 @@
             margin-right: 8px;
             opacity: 0.7;
         }
+
         .map-label-div-icon {
             font-size: 12px;
             font-weight: bold;
@@ -104,7 +123,11 @@
             border: 1px solid #ccc;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
-        #chartContainer, #ageChartContainer, #riskChartContainer { /* Added #riskChartContainer */
+
+        #chartContainer,
+        #ageChartContainer,
+        #riskChartContainer {
+            /* Added #riskChartContainer */
             margin-top: 20px;
             padding: 20px;
             background-color: #ffffff;
@@ -113,22 +136,27 @@
         }
 
         /* Styles for the stacked horizontal bar chart */
-        .stacked-bar-chart, .horizontal-bar-chart {
+        .stacked-bar-chart,
+        .horizontal-bar-chart {
             width: 100%;
             display: flex;
             flex-direction: column;
-            gap: 10px; /* Space between bars */
+            gap: 10px;
+            /* Space between bars */
             padding-top: 15px;
         }
+
         .bar-item {
             display: flex;
             align-items: center;
             font-size: 14px;
             position: relative;
         }
+
         .bar-label {
             flex-shrink: 0;
-            width: 150px; /* Fixed width for labels */
+            width: 150px;
+            /* Fixed width for labels */
             text-align: right;
             padding-right: 10px;
             font-weight: 500;
@@ -137,15 +165,21 @@
             white-space: nowrap;
             text-overflow: ellipsis;
         }
+
         .bar-body {
             flex-grow: 1;
-            height: 25px; /* Height of the bar */
+            height: 25px;
+            /* Height of the bar */
             border-radius: 4px;
             display: flex;
-            overflow: hidden; /* Ensure rounded corners apply to children */
-            background-color: #e0e0e0; /* Fallback for 0% bars */
-            cursor: pointer; /* Added for tooltip indication on the whole bar */
+            overflow: hidden;
+            /* Ensure rounded corners apply to children */
+            background-color: #e0e0e0;
+            /* Fallback for 0% bars */
+            cursor: pointer;
+            /* Added for tooltip indication on the whole bar */
         }
+
         .bar-segment {
             height: 100%;
             display: flex;
@@ -153,37 +187,52 @@
             justify-content: center;
             color: white;
             font-weight: bold;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
-            font-size: 13px; /* Adjusted font size */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+            font-size: 13px;
+            /* Adjusted font size */
             box-sizing: border-box;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            transition: width 0.5s ease-out; /* Smooth transition */
-            padding: 0 5px; /* Adjusted padding */
-            min-width: 45px; /* NEW: Minimum width to ensure text visibility */
+            transition: width 0.5s ease-out;
+            /* Smooth transition */
+            padding: 0 5px;
+            /* Adjusted padding */
+            min-width: 45px;
+            /* NEW: Minimum width to ensure text visibility */
         }
 
         /* Specific style for age chart bars (simpler, not stacked) */
         /* REMOVED: .age-bar as it's now stacked */
 
-        .outcome-legend, .gender-legend, .risk-legend { /* Added .risk-legend */
+        .outcome-legend,
+        .gender-legend,
+        .risk-legend {
+            /* Added .risk-legend */
             margin-top: 15px;
             padding: 10px;
             background-color: #f9f9f9;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
         }
-        .outcome-legend-item, .gender-legend-item, .risk-legend-item { /* Added .risk-legend-item */
+
+        .outcome-legend-item,
+        .gender-legend-item,
+        .risk-legend-item {
+            /* Added .risk-legend-item */
             display: flex;
             align-items: center;
             font-size: 14px;
             color: #555;
         }
-        .outcome-legend-item i, .gender-legend-item i, .risk-legend-item i { /* Added .risk-legend-item i */
+
+        .outcome-legend-item i,
+        .gender-legend-item i,
+        .risk-legend-item i {
+            /* Added .risk-legend-item i */
             width: 18px;
             height: 18px;
             margin-right: 8px;
@@ -198,16 +247,22 @@
             padding: 8px 12px;
             border-radius: 5px;
             font-size: 13px;
-            pointer-events: none; /* Allows mouse events to pass through */
-            opacity: 0; /* Initially hidden */
+            pointer-events: none;
+            /* Allows mouse events to pass through */
+            opacity: 0;
+            /* Initially hidden */
             transition: opacity 0.2s ease-in-out;
-            z-index: 9999; /* Ensure it's on top */
-            white-space: pre-line; /* Allow text wrapping for multiple lines */
+            z-index: 9999;
+            /* Ensure it's on top */
+            white-space: pre-line;
+            /* Allow text wrapping for multiple lines */
             text-align: left;
         }
+
         #customTooltip.show {
             opacity: 1;
         }
+
         /* Style for the colored dot in the tooltip */
         .tooltip-color-dot {
             display: inline-block;
@@ -221,55 +276,206 @@
 
         /* Define colors for each outcome */
         /* Updated colors based on user request */
-        .outcome-Completed { background-color: #4CAF50; /* เขียว */ }
-        .outcome-Cured { background-color: #006400; /* เขียวเข้ม */ }
-        .outcome-OnTreatment { background-color: #87CEEB; /* ฟ้า */ }
-        .outcome-TransferredOut { background-color: #CFD8DC; /* เทาอ่อน */ }
-        .outcome-Died { background-color: #F44336; /* แดง */ }
-        .outcome-LostToFollowUp { background-color: #FFC107; /* เหลืองส้ม */ }
-        .outcome-Failed { background-color: #9932CC; /* ม่วง */ }
-        .outcome-RRMDRBeforeMonth5 { background-color: #FF9800; /* ส้ม */ }
-        .outcome-ChangeDiagnosis { background-color: #616161; /* เทาเข้ม */ }
-        .outcome-Undefined { background-color: #B0BEC5; /* Light Blue Grey for 'ไม่ระบุ' */ }
+        .outcome-Completed {
+            background-color: #4CAF50;
+            /* เขียว */
+        }
+
+        .outcome-Cured {
+            background-color: #006400;
+            /* เขียวเข้ม */
+        }
+
+        .outcome-OnTreatment {
+            background-color: #87CEEB;
+            /* ฟ้า */
+        }
+
+        .outcome-TransferredOut {
+            background-color: #CFD8DC;
+            /* เทาอ่อน */
+        }
+
+        .outcome-Died {
+            background-color: #F44336;
+            /* แดง */
+        }
+
+        .outcome-LostToFollowUp {
+            background-color: #FFC107;
+            /* เหลืองส้ม */
+        }
+
+        .outcome-Failed {
+            background-color: #9932CC;
+            /* ม่วง */
+        }
+
+        .outcome-RRMDRBeforeMonth5 {
+            background-color: #FF9800;
+            /* ส้ม */
+        }
+
+        .outcome-ChangeDiagnosis {
+            background-color: #616161;
+            /* เทาเข้ม */
+        }
+
+        .outcome-Undefined {
+            background-color: #B0BEC5;
+            /* Light Blue Grey for 'ไม่ระบุ' */
+        }
 
         /* NEW: Define colors for genders */
-        .gender-Male { background-color: #3498db; } /* Blue */
-        .gender-Female { background-color: #e74c3c; } /* Red/Pinkish for contrast */
-        .gender-UndefinedGender { background-color: #95a5a6; } /* Grey for undefined gender */
+        .gender-Male {
+            background-color: #58bedd;
+        }
+
+        /* Blue */
+        .gender-Female {
+            background-color: #e659de;
+        }
+
+        /* Red/Pinkish for contrast */
+        .gender-UndefinedGender {
+            background-color: #95a5a6;
+        }
+
+        /* Grey for undefined gender */
 
         /* NEW: Define colors for risk levels with diverse palette */
         /* กลุ่ม "ประชากรเสี่ยงต่อวัณโรค" */
-        .risk-health-personnel { background-color: #1a535c; } /* Dark Teal */
-        .risk-migrant { background-color: #4dc7d9; } /* Light Blue-Green */
-        .risk-prisoner-old { background-color: #7bd9a2; } /* Mint Green */
-        .risk-prisoner-new { background-color: #a7d97b; } /* Light Green */
-        .risk-bedridden { background-color: #d9d07b; } /* Olive Yellow */
-        .risk-slum-camp { background-color: #d9a77b; } /* Orange-Brown */
-        .risk-detention-center { background-color: #d97b7b; } /* Dusty Rose */
+        .risk-health-personnel {
+            background-color: #1a535c;
+        }
+
+        /* Dark Teal */
+        .risk-migrant {
+            background-color: #4dc7d9;
+        }
+
+        /* Light Blue-Green */
+        .risk-prisoner-old {
+            background-color: #7bd9a2;
+        }
+
+        /* Mint Green */
+        .risk-prisoner-new {
+            background-color: #a7d97b;
+        }
+
+        /* Light Green */
+        .risk-bedridden {
+            background-color: #d9d07b;
+        }
+
+        /* Olive Yellow */
+        .risk-slum-camp {
+            background-color: #d9a77b;
+        }
+
+        /* Orange-Brown */
+        .risk-detention-center {
+            background-color: #d97b7b;
+        }
+
+        /* Dusty Rose */
 
         /* กลุ่ม "ผู้ที่มีโรคหรือภาวะเสี่ยงต่อวัณโรค" */
-        .risk-drug-addict { background-color: #6a0572; } /* Dark Purple */
-        .risk-smoker { background-color: #9338b5; } /* Medium Purple */
-        .risk-b24-patient { background-color: #c063e3; } /* Light Purple */
-        .risk-mental-illness { background-color: #e69af0; } /* Lavender */
-        .risk-gastric-surgery { background-color: #ffc0cb; } /* Pink */
-        .risk-ckd { background-color: #a52a2a; } /* Brown */
-        .risk-cancer { background-color: #cd5c5c; } /* Indian Red */
-        .risk-alcohol-disorder { background-color: #f08080; } /* Light Coral */
-        .risk-history-tb { background-color: #ffb6c1; } /* Light Pink */
-        .risk-immunosuppressed { background-color: #4a4e4d; } /* Dark Gray */
-        .risk-diabetes { background-color: #7b8d8d; } /* Medium Gray */
-        .risk-uncontrolled-diabetes { background-color: #b0b5b5; } /* Light Gray */
-        .risk-copd { background-color: #d8d8d8; } /* Very Light Gray */
-        .risk-other-medical { background-color: #8B4513; } /* Saddle Brown */
+        .risk-drug-addict {
+            background-color: #6a0572;
+        }
+
+        /* Dark Purple */
+        .risk-smoker {
+            background-color: #9338b5;
+        }
+
+        /* Medium Purple */
+        .risk-b24-patient {
+            background-color: #c063e3;
+        }
+
+        /* Light Purple */
+        .risk-mental-illness {
+            background-color: #e69af0;
+        }
+
+        /* Lavender */
+        .risk-gastric-surgery {
+            background-color: #ffc0cb;
+        }
+
+        /* Pink */
+        .risk-ckd {
+            background-color: #a52a2a;
+        }
+
+        /* Brown */
+        .risk-cancer {
+            background-color: #cd5c5c;
+        }
+
+        /* Indian Red */
+        .risk-alcohol-disorder {
+            background-color: #f08080;
+        }
+
+        /* Light Coral */
+        .risk-history-tb {
+            background-color: #ffb6c1;
+        }
+
+        /* Light Pink */
+        .risk-immunosuppressed {
+            background-color: #4a4e4d;
+        }
+
+        /* Dark Gray */
+        .risk-diabetes {
+            background-color: #7b8d8d;
+        }
+
+        /* Medium Gray */
+        .risk-uncontrolled-diabetes {
+            background-color: #b0b5b5;
+        }
+
+        /* Light Gray */
+        .risk-copd {
+            background-color: #d8d8d8;
+        }
+
+        /* Very Light Gray */
+        .risk-other-medical {
+            background-color: #8B4513;
+        }
+
+        /* Saddle Brown */
 
         /* กลุ่ม "ผู้สัมผัสวัณโรค" */
-        .risk-close-contact-out { background-color: #FFD700; } /* Gold */
-        .risk-household-contact { background-color: #DAA520; } /* Goldenrod */
+        .risk-close-contact-out {
+            background-color: #FFD700;
+        }
+
+        /* Gold */
+        .risk-household-contact {
+            background-color: #DAA520;
+        }
+
+        /* Goldenrod */
 
         /* กลุ่ม "ไม่มีกลุ่มเสี่ยง" */
-        .risk-no-risk { background-color: #36454F; } /* Charcoal */
-        .risk-undefined-risk { background-color: #708090; } /* Slate Gray */
+        .risk-no-risk {
+            background-color: #36454F;
+        }
+
+        /* Charcoal */
+        .risk-undefined-risk {
+            background-color: #708090;
+        }
+
+        /* Slate Gray */
 
 
         /* Loading Overlay Styles */
@@ -287,9 +493,12 @@
             color: white;
             font-size: 1.5em;
             z-index: 2000;
-            display: none; /* Hidden by default */
-            backdrop-filter: blur(5px); /* Optional: blur background */
+            display: none;
+            /* Hidden by default */
+            backdrop-filter: blur(5px);
+            /* Optional: blur background */
         }
+
         #loadingOverlay .spinner {
             border: 6px solid #f3f3f3;
             border-top: 6px solid #3498db;
@@ -299,9 +508,15 @@
             animation: spin 1s linear infinite;
             margin-bottom: 15px;
         }
+
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
 
@@ -312,48 +527,70 @@
                 margin: 0;
                 padding: 10px;
             }
+
             h1 {
-                font-size: 1.5em; /* Reduced for tablets */
+                font-size: 1.5em;
+                /* Reduced for tablets */
             }
+
             #mapid {
-                height: 400px; /* Slightly reduce map height for tablets */
+                height: 400px;
+                /* Slightly reduce map height for tablets */
             }
+
             .controls {
-                position: relative; /* Not absolute anymore */
+                position: relative;
+                /* Not absolute anymore */
                 top: auto;
                 left: auto;
                 margin-bottom: 15px;
                 flex-direction: column;
                 align-items: stretch;
-                width: auto; /* Adjust width to fit container */
+                width: auto;
+                /* Adjust width to fit container */
                 box-sizing: border-box;
             }
+
             .controls label,
             .controls select {
                 width: 100%;
                 box-sizing: border-box;
             }
+
             .bar-label {
-                width: 100px; /* Adjust label width for smaller screens */
+                width: 100px;
+                /* Adjust label width for smaller screens */
             }
-            .bar-segment { /* Adjusted for both */
-                font-size: 11px; /* Smaller font for value on small screens */
-                min-width: unset; /* Remove min-width on small screens to prevent overflow */
+
+            .bar-segment {
+                /* Adjusted for both */
+                font-size: 11px;
+                /* Smaller font for value on small screens */
+                min-width: unset;
+                /* Remove min-width on small screens to prevent overflow */
                 padding: 0 2px;
             }
-            .outcome-legend, .gender-legend, .risk-legend { /* Combined responsive legend */
+
+            .outcome-legend,
+            .gender-legend,
+            .risk-legend {
+                /* Combined responsive legend */
                 flex-direction: column;
                 gap: 10px;
             }
+
             #analysisResults h2 {
                 font-size: 1.2em;
             }
+
             #analysisResults h3 {
                 font-size: 1.1em;
             }
+
             #analysisResults p {
                 font-size: 1em;
             }
+
             #analysisResults ul {
                 margin-left: 20px;
             }
@@ -361,31 +598,47 @@
 
         @media (max-width: 480px) {
             h1 {
-                font-size: 1.2em; /* Further reduce for very small phones */
+                font-size: 1.2em;
+                /* Further reduce for very small phones */
             }
+
             #mapid {
-                height: 300px; /* Reduce map height significantly for phones */
+                height: 300px;
+                /* Reduce map height significantly for phones */
             }
+
             .bar-label {
-                width: 80px; /* Further adjust label width */
-                font-size: 12px; /* Smaller font for labels */
+                width: 80px;
+                /* Further adjust label width */
+                font-size: 12px;
+                /* Smaller font for labels */
             }
-            .bar-segment { /* Adjusted for both */
-                font-size: 9px; /* Even smaller font for values */
+
+            .bar-segment {
+                /* Adjusted for both */
+                font-size: 9px;
+                /* Even smaller font for values */
                 padding: 0 1px;
             }
+
             .bar-body {
-                height: 20px; /* Slightly thinner bars */
+                height: 20px;
+                /* Slightly thinner bars */
             }
+
             .outcome-legend-item,
-            .gender-legend-item, /* Added gender legend item */
-            .risk-legend-item, /* Added risk legend item */
+            .gender-legend-item,
+            /* Added gender legend item */
+            .risk-legend-item,
+            /* Added risk legend item */
             .bar-item {
-                font-size: 13px; /* Smaller general text */
+                font-size: 13px;
+                /* Smaller general text */
             }
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -408,7 +661,7 @@
         </div>
 
         <div id="mapid">
-            </div>
+        </div>
 
         <div id="chartContainer">
             <h2>ผลงานการรักษาสำเร็จของผู้ป่วยวัณโรคทุกประเภท (All type Success rate) ปีงบประมาณ 2568</h2>
@@ -816,7 +1069,7 @@
 
             // Render Overall Province Bar (if there's data)
             if (overallProvinceCounts.total > 0) {
-                renderBar('ภาพรวมจังหวัดนครสวรรค์', overallProvinceCounts, chartContainer, outcomeDisplayOrder, outcomeColorClasses);
+                renderBar('ภาพรวม', overallProvinceCounts, chartContainer, outcomeDisplayOrder, outcomeColorClasses);
             }
 
             // Render individual hospital bars
@@ -914,7 +1167,7 @@
             if (newY + tooltipRect.height > bodyRect.bottom - 20) {
                 newY = event.clientY + window.scrollY - tooltipRect.height - yOffset;
             }
-             // Ensure tooltip doesn't go off the left edge
+            // Ensure tooltip doesn't go off the left edge
             if (newX < window.scrollX) {
                 newX = window.scrollX;
             }
@@ -1251,6 +1504,7 @@
         }
 
         // Function to simulate AI analysis and update paragraphs
+        // Function to simulate AI analysis and update paragraphs
         async function runAIAnalysis(data) {
             const loadingOverlay = document.getElementById('loadingOverlay');
             const analysisParagraphs = document.getElementById('analysisParagraphs');
@@ -1262,18 +1516,34 @@
                 let hospitalOutcomeCounts = {}; // To aggregate data per hospital, similar to chart
                 let rrMdrAreaCounts = {}; // { 'อำเภอ - ตำBln': count, ... }
 
+                // NEW: Age & Gender Data Aggregation for AI Analysis
+                let ageGenderCounts = {}; // { ageGroup: { 'ชาย': count, 'หญิง': count, 'ไม่ระบุเพศ': count, total: count }, ... }
+                let overallGenderCounts = { 'ชาย': 0, 'หญิง': 0, 'ไม่ระบุเพศ': 0, total: 0 };
+
+                ageGroupOrder.forEach(group => {
+                    ageGenderCounts[group] = { total: 0 };
+                    genderDisplayOrder.forEach(gender => {
+                        ageGenderCounts[group][gender] = 0;
+                    });
+                });
+
+                // NEW: Risk Group & Risk Level Data Aggregation for AI Analysis
+                let riskGroupCounts = {}; // { riskGroup: { riskLevel1: count, riskLevel2: count, total: count }, ... }
+                let allRiskLevelsPresentInAnalysis = new Set();
+
+
                 data.features.forEach(f => {
                     const hospital = f.properties['โรงพยาบาล'] || 'ไม่ระบุ';
                     const outcome = f.properties['ผลการรักษา'] || 'ไม่ระบุ';
 
                     if (!hospitalOutcomeCounts[hospital]) {
-                        hospitalOutcomeCounts[hospital] = { total: 0, 'Cured': 0, 'Completed': 0, 'Lost to follow-up': 0, 'Died': 0, 'On treatment':0, 'Change diagnosis':0, 'RR/MDR ก่อนเดือนที่ 5':0, 'Transferred out':0, 'Undefined':0, 'Failed':0 };
+                        hospitalOutcomeCounts[hospital] = { total: 0, 'Cured': 0, 'Completed': 0, 'Lost to follow-up': 0, 'Died': 0, 'On treatment': 0, 'Change diagnosis': 0, 'RR/MDR ก่อนเดือนที่ 5': 0, 'Transferred out': 0, 'Undefined': 0, 'Failed': 0 };
                     }
                     hospitalOutcomeCounts[hospital].total++;
                     if (hospitalOutcomeCounts[hospital][outcome] !== undefined) {
                         hospitalOutcomeCounts[hospital][outcome]++;
                     } else {
-                         hospitalOutcomeCounts[hospital]['Undefined']++; // Fallback for unexpected outcomes
+                        hospitalOutcomeCounts[hospital]['Undefined']++; // Fallback for unexpected outcomes
                     }
 
                     // Aggregate RR/MDR by area
@@ -1286,9 +1556,45 @@
                         }
                         rrMdrAreaCounts[areaKey]++;
                     }
+
+                    // NEW: Aggregate for Age & Gender
+                    const age = f.properties['อายุ'];
+                    const gender = f.properties['เพศ'] || 'ไม่ระบุเพศ';
+                    const ageGroup = getAgeGroup(age);
+
+                    if (ageGenderCounts[ageGroup]) { // Ensure ageGroup exists in our predefined order
+                        ageGenderCounts[ageGroup][gender]++;
+                        ageGenderCounts[ageGroup].total++;
+                    }
+                    overallGenderCounts[gender]++;
+                    overallGenderCounts.total++;
+
+                    // NEW: Aggregate for Risk Group & Risk Level
+                    const riskGroup = f.properties['กลุ่มเสี่ยง'] || 'ไม่ระบุกลุ่มเสี่ยง';
+                    let riskLevel = f.properties['ความเสี่ยง'] || 'ไม่ระบุความเสี่ยง';
+
+                    // Apply the same remapping logic as in renderRiskChart
+                    if (riskGroup === 'ผู้ที่มีโรคหรือภาภาวะเสี่ยงต่อวัณโรค' &&
+                        !riskLevelDisplayOrder.includes(riskLevel) &&
+                        riskLevel !== 'ไม่ระบุความเสี่ยง'
+                    ) {
+                        riskLevel = 'อื่นๆ';
+                    } else if (!riskLevelDisplayOrder.includes(riskLevel) && riskLevel !== 'ไม่ระบุความเสี่ยง') {
+                        riskLevel = 'ไม่ระบุความเสี่ยง';
+                    }
+
+                    if (!riskGroupCounts[riskGroup]) {
+                        riskGroupCounts[riskGroup] = { total: 0 };
+                    }
+                    if (!riskGroupCounts[riskGroup][riskLevel]) {
+                        riskGroupCounts[riskGroup][riskLevel] = 0;
+                    }
+                    riskGroupCounts[riskGroup][riskLevel]++;
+                    riskGroupCounts[riskGroup].total++;
+                    allRiskLevelsPresentInAnalysis.add(riskLevel);
                 });
 
-                // Calculate overall province data
+                // Calculate overall province data for outcomes
                 let overallCured = 0;
                 let overallCompleted = 0;
                 let overallLost = 0;
@@ -1297,7 +1603,7 @@
                 let overallChangeDiagnosis = 0;
                 let overallRRMDR = 0;
                 let overallTransferredOut = 0;
-                let overallUndefined = 0;
+                let overallUndefinedOutcome = 0; // Renamed to avoid conflict
                 let overallFailed = 0;
 
                 for (const hospital in hospitalOutcomeCounts) {
@@ -1309,15 +1615,12 @@
                     overallChangeDiagnosis += hospitalOutcomeCounts[hospital]['Change diagnosis'];
                     overallRRMDR += hospitalOutcomeCounts[hospital]['RR/MDR ก่อนเดือนที่ 5'];
                     overallTransferredOut += hospitalOutcomeCounts[hospital]['Transferred out'];
-                    overallUndefined += hospitalOutcomeCounts[hospital]['Undefined'];
+                    overallUndefinedOutcome += hospitalOutcomeCounts[hospital]['Undefined'];
                     overallFailed += hospitalOutcomeCounts[hospital]['Failed'];
                 }
 
 
                 const overallSuccessRate = totalPatients > 0 ? (((overallCured + overallCompleted) / totalPatients) * 100).toFixed(1) : 0;
-                const overallLostToFollowUpPercentage = totalPatients > 0 ? ((overallLost / totalPatients) * 100).toFixed(1) : 0;
-                const overallDiedPercentage = totalPatients > 0 ? ((overallDied / totalPatients) * 100).toFixed(1) : 0;
-                // Calculate percentages for each outcome type
                 const percCured = totalPatients > 0 ? ((overallCured / totalPatients) * 100).toFixed(1) : 0;
                 const percCompleted = totalPatients > 0 ? ((overallCompleted / totalPatients) * 100).toFixed(1) : 0;
                 const percOnTreatment = totalPatients > 0 ? ((overallOnTreatment / totalPatients) * 100).toFixed(1) : 0;
@@ -1326,7 +1629,7 @@
                 const percTransferredOut = totalPatients > 0 ? ((overallTransferredOut / totalPatients) * 100).toFixed(1) : 0;
                 const percLostToFollowUp = totalPatients > 0 ? ((overallLost / totalPatients) * 100).toFixed(1) : 0;
                 const percDied = totalPatients > 0 ? ((overallDied / totalPatients) * 100).toFixed(1) : 0;
-                const percUndefined = totalPatients > 0 ? ((overallUndefined / totalPatients) * 100).toFixed(1) : 0;
+                const percUndefinedOutcome = totalPatients > 0 ? ((overallUndefinedOutcome / totalPatients) * 100).toFixed(1) : 0;
                 const percFailed = totalPatients > 0 ? ((overallFailed / totalPatients) * 100).toFixed(1) : 0;
 
 
@@ -1353,25 +1656,81 @@
                 let topHospitals = hospitalPerformance.slice(0, Math.min(3, hospitalPerformance.length));
                 let bottomHospitals = hospitalPerformance.slice(Math.max(0, hospitalPerformance.length - 3), hospitalPerformance.length).sort((a, b) => a.successRate - b.successRate);
 
-                // --- START: Added for Console Output ---
-                console.log("--- Performance Metrics for Each Hospital (as calculated for AI analysis) ---");
-                if (hospitalPerformance.length > 0) {
-                    hospitalPerformance.forEach(h => {
-                        console.log(`Hospital: ${h.name}`);
-                        console.log(`  Total Patients: ${h.total}`);
-                        console.log(`  Success Rate (Cured + Completed): ${h.successRate}%`);
-                        console.log(`  Lost to Follow-up Rate: ${h.lostRate}%`);
-                        console.log(`  Died Rate: ${h.diedRate}%`);
-                        console.log('---');
+
+                // --- Generate Age & Gender Summary ---
+                let ageGenderSummary = "";
+                let sortedAgeGroups = Object.entries(ageGenderCounts).filter(([, counts]) => counts.total > 0).sort((a, b) => b[1].total - a[1].total);
+                if (sortedAgeGroups.length > 0) {
+                    const topGroup = sortedAgeGroups[0];
+                    const topGroupName = topGroup[0];
+                    const topGroupTotal = topGroup[1].total;
+                    const topGroupGenderCounts = topGroup[1];
+                    let dominantGenderInTopGroup = '';
+                    let maxGenderCount = 0;
+
+                    genderDisplayOrder.forEach(gender => {
+                        if (topGroupGenderCounts[gender] > maxGenderCount) {
+                            maxGenderCount = topGroupGenderCounts[gender];
+                            dominantGenderInTopGroup = gender;
+                        }
                     });
+
+                    ageGenderSummary = `กราฟแสดงให้เห็นว่า ผู้ป่วยวัณโรคส่วนใหญ่อยู่ในกลุ่มอายุ <strong>${topGroupName}</strong> (${topGroupTotal} ราย)`;
+                    if (dominantGenderInTopGroup && maxGenderCount > 0) {
+                        ageGenderSummary += ` และส่วนใหญ่เป็นเพศ <strong>${dominantGenderInTopGroup}</strong> (${maxGenderCount} ราย)`;
+                    }
+
+                    if (sortedAgeGroups.length > 1) {
+                        const secondTopGroup = sortedAgeGroups[1];
+                        const secondTopGroupName = secondTopGroup[0];
+                        const secondTopGroupTotal = secondTopGroup[1].total;
+                        ageGenderSummary += ` รองลงมาคือกลุ่ม <strong>${secondTopGroupName}</strong> (${secondTopGroupTotal} ราย)`;
+                    }
+                    ageGenderSummary += ". ข้อมูลนี้เป็นประโยชน์ในการวางแผนการเฝ้าระวังและเข้าถึงกลุ่มเป้าหมายในแต่ละช่วงวัยและเพศ.";
                 } else {
-                    console.log("No hospital data available based on current filters for detailed metrics.");
+                    ageGenderSummary = "ไม่พบข้อมูลช่วงอายุและเพศผู้ป่วยสำหรับวิเคราะห์.";
                 }
-                console.log("------------------------------------------------------------------");
-                // --- END: Added for Console Output ---
 
 
-                // Generate basic analysis paragraphs with simpler headings
+                // --- Generate Risk Group & Risk Level Summary ---
+                let riskGroupAnalysisSummary = "";
+                let sortedRiskGroups = Object.entries(riskGroupCounts).filter(([, counts]) => counts.total > 0).sort((a, b) => b[1].total - a[1].total);
+                if (sortedRiskGroups.length > 0) {
+                    const topRiskGroup = sortedRiskGroups[0];
+                    const topRiskGroupName = topRiskGroup[0];
+                    const topRiskGroupTotal = topRiskGroup[1].total;
+                    const topRiskGroupLevelCounts = topRiskGroup[1];
+
+                    // Filter to only levels within this specific group and find the dominant ones
+                    const relevantLevelsInTopGroup = Object.entries(topRiskGroupLevelCounts)
+                        .filter(([key, value]) => key !== 'total' && value > 0)
+                        .sort((a, b) => b[1] - a[1]); // Sort by count descending
+
+                    riskGroupAnalysisSummary = `จากการวิเคราะห์กลุ่มเสี่ยงหลักพบว่า <strong>${topRiskGroupName}</strong> มีจำนวนผู้ป่วยมากที่สุด (${topRiskGroupTotal} ราย)`;
+
+                    if (relevantLevelsInTopGroup.length > 0) {
+                        riskGroupAnalysisSummary += ` โดยมีความเสี่ยงย่อยที่เด่นชัดคือ <strong>${relevantLevelsInTopGroup[0][0]}</strong> (${relevantLevelsInTopGroup[0][1]} ราย)`;
+                    }
+                    if (relevantLevelsInTopGroup.length > 1) {
+                        riskGroupAnalysisSummary += `, อันดับ 2 คือ <strong>${relevantLevelsInTopGroup[1][0]}</strong> (${relevantLevelsInTopGroup[1][1]} ราย)`;
+                    }
+                    if (relevantLevelsInTopGroup.length > 2) {
+                        riskGroupAnalysisSummary += ` และอันดับ 3 คือ <strong>${relevantLevelsInTopGroup[2][0]}</strong> (${relevantLevelsInTopGroup[2][1]} ราย)`;
+                    }
+                    riskGroupAnalysisSummary += ". การทำความเข้าใจกลุ่มเสี่ยงเหล่านี้จะช่วยให้สามารถดำเนินมาตรการป้องกันและคัดกรองได้อย่างตรงจุดและมีประสิทธิภาพยิ่งขึ้น.";
+
+                    if (sortedRiskGroups.length > 1) {
+                        const secondTopRiskGroup = sortedRiskGroups[1];
+                        const secondTopRiskGroupName = secondTopRiskGroup[0];
+                        const secondTopRiskGroupTotal = secondTopRiskGroup[1].total;
+                        riskGroupAnalysisSummary += `<br>กลุ่มเสี่ยงหลักรองลงมาคือ <strong>${secondTopRiskGroupName}</strong> (${secondTopRiskGroupTotal} ราย).`;
+                    }
+                } else {
+                    riskGroupAnalysisSummary = "ไม่พบข้อมูลกลุ่มเสี่ยงและความเสี่ยงผู้ป่วยสำหรับวิเคราะห์.";
+                }
+
+
+                // Generate analysis paragraphs
                 let analysisContent = '';
 
                 if (totalPatients === 0) {
@@ -1383,14 +1742,14 @@
                         <ul>
                             <li><b>รักษาหาย (Cured):</b> ${overallCured} ราย (${percCured}%)</li>
                             <li><b>รักษาครบ (Completed):</b> ${overallCompleted} ราย (${percCompleted}%)</li>
-                            <li><b>ยังอยู่ระหว่างรักษา (On treatment):</b> ${overallOnTreatment} ราย (${percOnTreatment}%)</li>
-                            <li><b>เปลี่ยนการวินิจฉัย:</b> ${overallChangeDiagnosis} ราย (${percChangeDiagnosis}%)</li>
-                            <li><b>RR/MDR ก่อนเดือนที่ 5:</b> ${overallRRMDR} ราย (${percRRMDR}%)</li>
-                            <li><b>ย้ายออก:</b> ${overallTransferredOut} ราย (${percTransferredOut}%)</li>
-                            <li><b>ขาดการรักษา (Lost to follow-up):</b> ${overallLost} ราย (${percLostToFollowUp}%)</li>
-                            <li><b>เสียชีวิต:</b> ${overallDied} ราย (${percDied}%)</li>
+                            <li><b>ยังอยู่ระหว่างรักษา (On treatment):</b> ${percOnTreatment > 0 ? `${overallOnTreatment} ราย (${percOnTreatment}%)` : '0 ราย'}</li>
+                            <li><b>เปลี่ยนการวินิจฉัย:</b> ${percChangeDiagnosis > 0 ? `${overallChangeDiagnosis} ราย (${percChangeDiagnosis}%)` : '0 ราย'}</li>
+                            <li><b>RR/MDR ก่อนเดือนที่ 5:</b> ${percRRMDR > 0 ? `${overallRRMDR} ราย (${percRRMDR}%)` : '0 ราย'}</li>
+                            <li><b>ย้ายออก:</b> ${percTransferredOut > 0 ? `${overallTransferredOut} ราย (${percTransferredOut}%)` : '0 ราย'}</li>
+                            <li><b>ขาดการรักษา (Lost to follow-up):</b> ${percLostToFollowUp > 0 ? `${overallLost} ราย (${percLostToFollowUp}%)` : '0 ราย'}</li>
+                            <li><b>เสียชีวิต:</b> ${percDied > 0 ? `${overallDied} ราย (${percDied}%)` : '0 ราย'}</li>
                             ${overallFailed > 0 ? `<li><b>ล้มเหลว (Failed):</b> ${overallFailed} ราย (${percFailed}%)</li>` : ''}
-                            ${overallUndefined > 0 ? `<li><b>ไม่ระบุ:</b> ${overallUndefined} ราย (${percUndefined}%)</li>` : ''}
+                            ${overallUndefinedOutcome > 0 ? `<li><b>ไม่ระบุ:</b> ${overallUndefinedOutcome} ราย (${percUndefinedOutcome}%)</li>` : ''}
                         </ul>
                         <p>โดยรวมแล้ว อัตราความสำเร็จของการรักษา (หาย + ครบ) อยู่ที่ <b>${overallSuccessRate}%</b></p>
                     `;
@@ -1409,16 +1768,25 @@
                     if (bottomHospitals.length > 0 && bottomHospitals.length !== hospitalPerformance.length) {
                         const hospitalsWithIssues = bottomHospitals.filter(h => h.lostRate > 0 || h.diedRate > 0);
                         if (hospitalsWithIssues.length > 0) {
-                           analysisContent += `<p>ส่วนโรงพยาบาลที่ยังมีความท้าทาย โดยมีสัดส่วนผู้ป่วยขาดการรักษาหรือเสียชีวิตสูง ได้แก่ ${hospitalsWithIssues.map(h => `<b>${h.name}</b>`).join(', ')}. โรงพยาบาลเหล่านี้ต้องพิจารณาหาสาเหตุและปรับปรุงการดูแลผู้ป่วย.</p>`;
+                            analysisContent += `<p>ส่วนโรงพยาบาลที่ยังมีความท้าทาย โดยมีสัดส่วนผู้ป่วยขาดการรักษาหรือเสียชีวิตสูง ได้แก่ ${hospitalsWithIssues.map(h => `<b>${h.name}</b>`).join(', ')}. โรงพยาบาลเหล่านี้ต้องพิจารณาหาสาเหตุและปรับปรุงการดูแลผู้ป่วย.</p>`;
                         }
                     }
                     analysisContent += `<p>สามารถดูรายละเอียดผลงานของแต่ละโรงพยาบาลได้จากกราฟแท่งด้านบน.</p>`;
+
+                    // --- NEW SECTION: การวิเคราะห์ตามช่วงอายุและเพศ ---
+                    analysisContent += `<h3>การวิเคราะห์ตามช่วงอายุและเพศ</h3>`;
+                    analysisContent += `<p>${ageGenderSummary}</p>`;
+
+                    // --- NEW SECTION: การวิเคราะห์ตามกลุ่มเสี่ยงและความเสี่ยง ---
+                    analysisContent += `<h3>การวิเคราะห์ตามกลุ่มเสี่ยงและความเสี่ยง</h3>`;
+                    analysisContent += `<p>${riskGroupAnalysisSummary}</p>`;
+
 
                     // Section 3: การเฝ้าระวังผู้ป่วยดื้อยา (RR/MDR)
                     analysisContent += `<h3>การเฝ้าระวังผู้ป่วยดื้อยา (RR/MDR)</h3>`;
                     const rrMdrAreas = Object.entries(rrMdrAreaCounts).filter(([, count]) => count > 0).sort((a, b) => b[1] - a[1]);
 
-                    if (rrMdrAreas.length > 0) {
+                    if (overallRRMDR > 0) {
                         analysisContent += `<p>พบผู้ป่วยที่วินิจฉัยว่าเป็นวัณโรคดื้อยา (RR/MDR) จำนวน <b>${overallRRMDR} ราย</b> ในพื้นที่ดังต่อไปนี้ (เรียงตามจำนวนมากไปน้อย):</p><ul>`;
                         rrMdrAreas.forEach(([area, count]) => {
                             analysisContent += `<li><b>${area}</b>: ${count} ราย</li>`;
@@ -1439,16 +1807,16 @@
                         analysisContent += `<li><b>ต้องปรับปรุงอัตราสำเร็จ:</b> อัตราความสำเร็จโดยรวมยังไม่ถึงเป้าหมาย (80%) ควรทบทวนขั้นตอนการรักษาและหาทางเพิ่มประสิทธิภาพ.</li>`;
                     }
 
-                    if (parseFloat(overallLostToFollowUpPercentage) > 10) {
+                    if (parseFloat(percLostToFollowUp) > 10) {
                         analysisContent += `<li><b>ผู้ป่วยขาดการรักษาเยอะ:</b> มีผู้ป่วยจำนวนมากที่ขาดการติดตาม ซึ่งอาจทำให้การแพร่เชื้อยังคงอยู่ ควรมีการติดตามผู้ป่วยอย่างใกล้ชิดมากขึ้น เช่น การโทรศัพท์ หรือส่ง อสม. ไปเยี่ยม.</li>`;
                     }
 
-                    if (parseFloat(overallDiedPercentage) > 5) {
-                        analysisContent += `<li><b>อัตราเสียชีวิตสูง:</b> ผู้ป่วยวัณโรคเสียชีวิตค่อนข้างมาก ควรตรวจสอบว่ามีสาเหตุใดที่สามารถป้องกันได้ และปรับปรุงการดูแลผู้ป่วยกลุ่มที่มีอาการหนักหรือมีโรคประจำตัว.</li>`;
+                    if (parseFloat(percDied) > 5) {
+                        analysisContent += `<li><b>อัตราเสียชีวิตสูง: เพื่อวิเคราะห์และระบุว่าผู้ป่วยมีอากรหนักหรือไม่</b> ผู้ป่วยวัณโรคเสียชีวิตค่อนข้างมาก ควรตรวจสอบว่ามีสาเหตุใดที่สามารถป้องกันได้ และปรับปรุงการดูแลผู้ป่วยกลุ่มที่มีอาการหนักหรือมีโรคประจำตัว.</li>`;
                     }
                     // Add advice for Failed if present
                     if (parseFloat(percFailed) > 0 && parseFloat(percFailed) > parseFloat(percLostToFollowUp) && parseFloat(percFailed) > parseFloat(percDied)) { // Simple heuristic
-                         analysisContent += `<li><b>ผลการรักษาล้มเหลว:</b> พบผู้ป่วยมีผลการรักษาล้มเหลว (${percFailed}%) ซึ่งบ่งชี้ว่าการรักษาอาจไม่เป็นไปตามแผน ควรทบทวนแนวทางการรักษาและพิจารณาปัจจัยที่ทำให้การรักษาไม่ได้ผล.</li>`;
+                        analysisContent += `<li><b>ผลการรักษาล้มเหลว:</b> พบผู้ป่วยมีผลการรักษาล้มเหลว (${percFailed}%) ซึ่งบ่งชี้ว่าการรักษาอาจไม่เป็นไปตามแผน ควรทบทวนแนวทางการรักษาและพิจารณาปัจจัยที่ทำให้การรักษาไม่ได้ผล.</li>`;
                     }
 
                     analysisContent += `</ul><p>การปรับปรุงจุดที่พบปัญหาจะช่วยให้การควบคุมวัณโรคในจังหวัดนครสวรรค์ดีขึ้นได้.</p>`;
@@ -1532,4 +1900,5 @@
     </script>
 
 </body>
+
 </html>
