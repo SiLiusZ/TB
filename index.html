@@ -104,7 +104,7 @@
             border: 1px solid #ccc;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
-        #chartContainer {
+        #chartContainer, #ageChartContainer, #riskChartContainer { /* Added #riskChartContainer */
             margin-top: 20px;
             padding: 20px;
             background-color: #ffffff;
@@ -113,7 +113,7 @@
         }
 
         /* Styles for the stacked horizontal bar chart */
-        .stacked-bar-chart {
+        .stacked-bar-chart, .horizontal-bar-chart {
             width: 100%;
             display: flex;
             flex-direction: column;
@@ -154,15 +154,20 @@
             color: white;
             font-weight: bold;
             text-shadow: 1px 1px 2px rgba(0,0,0,0.4);
-            font-size: 12px;
+            font-size: 13px; /* Adjusted font size */
             box-sizing: border-box;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             transition: width 0.5s ease-out; /* Smooth transition */
-            padding: 0 3px; /* Small padding inside segments */
+            padding: 0 5px; /* Adjusted padding */
+            min-width: 45px; /* NEW: Minimum width to ensure text visibility */
         }
-        .outcome-legend {
+
+        /* Specific style for age chart bars (simpler, not stacked) */
+        /* REMOVED: .age-bar as it's now stacked */
+
+        .outcome-legend, .gender-legend, .risk-legend { /* Added .risk-legend */
             margin-top: 15px;
             padding: 10px;
             background-color: #f9f9f9;
@@ -172,13 +177,13 @@
             flex-wrap: wrap;
             gap: 15px;
         }
-        .outcome-legend-item {
+        .outcome-legend-item, .gender-legend-item, .risk-legend-item { /* Added .risk-legend-item */
             display: flex;
             align-items: center;
             font-size: 14px;
             color: #555;
         }
-        .outcome-legend-item i {
+        .outcome-legend-item i, .gender-legend-item i, .risk-legend-item i { /* Added .risk-legend-item i */
             width: 18px;
             height: 18px;
             margin-right: 8px;
@@ -227,45 +232,45 @@
         .outcome-ChangeDiagnosis { background-color: #616161; /* เทาเข้ม */ }
         .outcome-Undefined { background-color: #B0BEC5; /* Light Blue Grey for 'ไม่ระบุ' */ }
 
+        /* NEW: Define colors for genders */
+        .gender-Male { background-color: #3498db; } /* Blue */
+        .gender-Female { background-color: #e74c3c; } /* Red/Pinkish for contrast */
+        .gender-UndefinedGender { background-color: #95a5a6; } /* Grey for undefined gender */
 
-        /* Styles for AI Analysis Section */
-        #analysisResults {
-            margin-top: 20px;
-            padding: 20px;
-            background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-        }
-        #analysisResults h2 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 15px;
-            font-size: 1.4em;
-        }
-        #analysisResults h3 { /* New style for sub-headings */
-            color: #34495e;
-            margin-top: 20px;
-            margin-bottom: 10px;
-            font-size: 1.2em;
-            border-bottom: 2px solid #eee;
-            padding-bottom: 5px;
-        }
-        #analysisResults p {
-            font-size: 1.1em;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            color: #555;
-            text-align: justify;
-        }
-        #analysisResults ul {
-            list-style-type: disc;
-            margin-left: 25px;
-            margin-bottom: 15px;
-            color: #555;
-        }
-        #analysisResults ul li {
-            margin-bottom: 5px;
-        }
+        /* NEW: Define colors for risk levels with diverse palette */
+        /* กลุ่ม "ประชากรเสี่ยงต่อวัณโรค" */
+        .risk-health-personnel { background-color: #1a535c; } /* Dark Teal */
+        .risk-migrant { background-color: #4dc7d9; } /* Light Blue-Green */
+        .risk-prisoner-old { background-color: #7bd9a2; } /* Mint Green */
+        .risk-prisoner-new { background-color: #a7d97b; } /* Light Green */
+        .risk-bedridden { background-color: #d9d07b; } /* Olive Yellow */
+        .risk-slum-camp { background-color: #d9a77b; } /* Orange-Brown */
+        .risk-detention-center { background-color: #d97b7b; } /* Dusty Rose */
+
+        /* กลุ่ม "ผู้ที่มีโรคหรือภาวะเสี่ยงต่อวัณโรค" */
+        .risk-drug-addict { background-color: #6a0572; } /* Dark Purple */
+        .risk-smoker { background-color: #9338b5; } /* Medium Purple */
+        .risk-b24-patient { background-color: #c063e3; } /* Light Purple */
+        .risk-mental-illness { background-color: #e69af0; } /* Lavender */
+        .risk-gastric-surgery { background-color: #ffc0cb; } /* Pink */
+        .risk-ckd { background-color: #a52a2a; } /* Brown */
+        .risk-cancer { background-color: #cd5c5c; } /* Indian Red */
+        .risk-alcohol-disorder { background-color: #f08080; } /* Light Coral */
+        .risk-history-tb { background-color: #ffb6c1; } /* Light Pink */
+        .risk-immunosuppressed { background-color: #4a4e4d; } /* Dark Gray */
+        .risk-diabetes { background-color: #7b8d8d; } /* Medium Gray */
+        .risk-uncontrolled-diabetes { background-color: #b0b5b5; } /* Light Gray */
+        .risk-copd { background-color: #d8d8d8; } /* Very Light Gray */
+        .risk-other-medical { background-color: #8B4513; } /* Saddle Brown */
+
+        /* กลุ่ม "ผู้สัมผัสวัณโรค" */
+        .risk-close-contact-out { background-color: #FFD700; } /* Gold */
+        .risk-household-contact { background-color: #DAA520; } /* Goldenrod */
+
+        /* กลุ่ม "ไม่มีกลุ่มเสี่ยง" */
+        .risk-no-risk { background-color: #36454F; } /* Charcoal */
+        .risk-undefined-risk { background-color: #708090; } /* Slate Gray */
+
 
         /* Loading Overlay Styles */
         #loadingOverlay {
@@ -331,10 +336,12 @@
             .bar-label {
                 width: 100px; /* Adjust label width for smaller screens */
             }
-            .bar-segment {
-                font-size: 10px; /* Smaller font for value on small screens */
+            .bar-segment { /* Adjusted for both */
+                font-size: 11px; /* Smaller font for value on small screens */
+                min-width: unset; /* Remove min-width on small screens to prevent overflow */
+                padding: 0 2px;
             }
-            .outcome-legend {
+            .outcome-legend, .gender-legend, .risk-legend { /* Combined responsive legend */
                 flex-direction: column;
                 gap: 10px;
             }
@@ -363,14 +370,16 @@
                 width: 80px; /* Further adjust label width */
                 font-size: 12px; /* Smaller font for labels */
             }
-            .bar-segment {
+            .bar-segment { /* Adjusted for both */
                 font-size: 9px; /* Even smaller font for values */
-                padding: 0 2px;
+                padding: 0 1px;
             }
             .bar-body {
                 height: 20px; /* Slightly thinner bars */
             }
             .outcome-legend-item,
+            .gender-legend-item, /* Added gender legend item */
+            .risk-legend-item, /* Added risk legend item */
             .bar-item {
                 font-size: 13px; /* Smaller general text */
             }
@@ -406,6 +415,25 @@
             <div id="outcomeChartLegend" class="outcome-legend"></div>
             <div id="staticHospitalChart" class="stacked-bar-chart"></div>
         </div>
+
+        <div id="ageChartContainer" class="chart-section">
+            <h2>จำนวนผู้ป่วยแยกตามช่วงอายุและเพศ</h2>
+            <div id="genderChartLegend" class="gender-legend"></div>
+            <div id="ageChart" class="stacked-bar-chart"></div>
+            <p style="font-size: 0.9em; color: #777; text-align: right; margin-top: 10px;">
+                *หมายเหตุ: สำหรับแถบที่มีจำนวนน้อยมาก ความยาวอาจถูกปรับเพื่อให้อ่านตัวเลขได้ชัดเจนขึ้น
+            </p>
+        </div>
+
+        <div id="riskChartContainer" class="chart-section">
+            <h2>จำนวนผู้ป่วยแยกตามกลุ่มเสี่ยงและความเสี่ยง</h2>
+            <div id="riskLevelChartLegend" class="risk-legend"></div>
+            <div id="riskChart" class="stacked-bar-chart"></div>
+            <p style="font-size: 0.9em; color: #777; text-align: right; margin-top: 10px;">
+                *หมายเหตุ: สำหรับแถบที่มีจำนวนน้อยมาก ความยาวอาจถูกปรับเพื่อให้อ่านตัวเลขได้ชัดเจนขึ้น
+            </p>
+        </div>
+
 
         <div id="analysisResults">
             <h2>ผลการวิเคราะห์ข้อมูลผู้ป่วยวัณโรค (โดย AI)</h2>
@@ -459,6 +487,92 @@
             'ไม่ระบุ': 'outcome-Undefined'
         };
 
+        // NEW: Define gender display order and color classes
+        const genderDisplayOrder = ['ชาย', 'หญิง', 'ไม่ระบุเพศ'];
+        const genderColorClasses = {
+            'ชาย': 'gender-Male',
+            'หญิง': 'gender-Female',
+            'ไม่ระบุเพศ': 'gender-UndefinedGender'
+        };
+
+        // NEW: Define risk level display order and color classes based on user's full list
+        const riskLevelDisplayOrder = [
+            // ประชากรเสี่ยงต่อวัณโรค
+            'บุคลากรสาธารณสุขดูแลผู้ป่วย**',
+            'ประชากรข้ามชาติ',
+            'ผู้ต้องขังในเรือนจำ (รายเก่า)**',
+            'ผู้ต้องขังในเรือนจำ (รายใหม่)**',
+            'ผู้ป่วยติดบ้านติดเตียง',
+            'ผู้อาศัยในชุมชนแออัด/ค่ายอพยพ',
+            'ผู้อาศัยในสถานพินิจ**',
+
+            // ผู้ที่มีโรคหรือภาวะเสี่ยงต่อวัณโรค
+            'ผู้ติดยาเสพติด**',
+            'ผู้ที่สูบบุหรี่**',
+            'ผู้ป่วย B24**',
+            'ผู้ป่วยจิตเวช',
+            'ผู้ป่วยผ่าตัดกระเพาะ ตัดต่อลำใส้',
+            'ผู้ป่วยโรคไตเรื้อรัง**',
+            'ผู้ป่วยโรคมะเร็ง',
+            'ผู้มีความผิดปกติจากการติดสุรา**',
+            'ผู้มีประวัติเป็นวัณโรค',
+            'โรคที่ได้รับยากดภูมิคุ้มกัน**',
+            'โรคเบาหวาน**',
+            'โรคเบาหวานที่คุมไม่ได้ (HbA1C ? 7 mg% หรือ FBS**',
+            'โรคปอดอุดกั้นเรื้อรัง (COPD)**',
+            'อื่นๆ',
+
+            // ผู้สัมผัสวัณโรค
+            'ผู้สัมผัสใกล้ชิด (นอกบ้าน)**',
+            'ผู้สัมผัสร่วมบ้าน**',
+
+            // ไม่มีกลุ่มเสี่ยง
+            'ไม่มีความเสี่ยง',
+            'ไม่ระบุความเสี่ยง' // Fallback for undefined data
+        ];
+
+        const riskLevelColorClasses = {
+            // ประชากรเสี่ยงต่อวัณโรค (โทนสีฟ้า-เขียว)
+            'บุคลากรสาธารณสุขดูแลผู้ป่วย**': 'risk-health-personnel',
+            'ประชากรข้ามชาติ': 'risk-migrant',
+            'ผู้ต้องขังในเรือนจำ (รายเก่า)**': 'risk-prisoner-old',
+            'ผู้ต้องขังในเรือนจำ (รายใหม่)**': 'risk-prisoner-new',
+            'ผู้ป่วยติดบ้านติดเตียง': 'risk-bedridden',
+            'ผู้อาศัยในชุมชนแออัด/ค่ายอพยพ': 'risk-slum-camp',
+            'ผู้อาศัยในสถานพินิจ**': 'risk-detention-center',
+
+            // ผู้ที่มีโรคหรือภาวะเสี่ยงต่อวัณโรค (โทนสีม่วง-แดง-น้ำตาล)
+            'ผู้ติดยาเสพติด**': 'risk-drug-addict',
+            'ผู้ที่สูบบุหรี่**': 'risk-smoker',
+            'ผู้ป่วย B24**': 'risk-b24-patient',
+            'ผู้ป่วยจิตเวช': 'risk-mental-illness',
+            'ผู้ป่วยผ่าตัดกระเพาะ ตัดต่อลำใส้': 'risk-gastric-surgery',
+            'ผู้ป่วยโรคไตเรื้อรัง**': 'risk-ckd',
+            'ผู้ป่วยโรคมะเร็ง': 'risk-cancer',
+            'ผู้มีความผิดปกติจากการติดสุรา**': 'risk-alcohol-disorder',
+            'ผู้มีประวัติเป็นวัณโรค': 'risk-history-tb',
+            'โรคที่ได้รับยากดภูมิคุ้มกัน**': 'risk-immunosuppressed',
+            'โรคเบาหวาน**': 'risk-diabetes',
+            'โรคเบาหวานที่คุมไม่ได้ (HbA1C ? 7 mg% หรือ FBS**': 'risk-uncontrolled-diabetes',
+            'โรคปอดอุดกั้นเรื้อรัง (COPD)**': 'risk-copd',
+            'อื่นๆ': 'risk-other-medical',
+
+            // ผู้สัมผัสวัณโรค (โทนสีเหลือง-ทอง)
+            'ผู้สัมผัสใกล้ชิด (นอกบ้าน)**': 'risk-close-contact-out',
+            'ผู้สัมผัสร่วมบ้าน**': 'risk-household-contact',
+
+            // ไม่มีกลุ่มเสี่ยง (โทนสีเทา)
+            'ไม่มีความเสี่ยง': 'risk-no-risk',
+            'ไม่ระบุความเสี่ยง': 'risk-undefined-risk' // Specific class for undefined
+        };
+
+
+        // NEW: Define age group order for consistent display
+        const ageGroupOrder = [
+            '0-4 ปี', '5-9 ปี', '10-14 ปี', '15-24 ปี', '25-34 ปี',
+            '35-44 ปี', '45-54 ปี', '55-64 ปี', '65-100 ปี', 'ไม่ระบุ/เกิน 100 ปี'
+        ];
+
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
@@ -497,7 +611,7 @@
                 const props = feature.properties;
                 const geoKey = `${props['จังหวัด']}-${props['อำเภอ']}-${props['ตำบล']}`;
                 // Use 'ไม่ระบุ' if outcome is null or undefined
-                const outcome = props['ผลการรักษา'] || 'ไม่ระบุ'; // Fixed typo here, was 'ไม่ระบุ'
+                const outcome = props['ผลการรักษา'] || 'ไม่ระระบุ';
 
                 if (!aggregatedFeatures[geoKey]) {
                     aggregatedFeatures[geoKey] = {
@@ -702,12 +816,12 @@
 
             // Render Overall Province Bar (if there's data)
             if (overallProvinceCounts.total > 0) {
-                renderBar('ภาพรวมจังหวัดนครสวรรค์', overallProvinceCounts, chartContainer);
+                renderBar('ภาพรวมจังหวัดนครสวรรค์', overallProvinceCounts, chartContainer, outcomeDisplayOrder, outcomeColorClasses);
             }
 
             // Render individual hospital bars
             sortedHospitals.forEach(([hospitalName, outcomeCounts]) => {
-                renderBar(hospitalName, outcomeCounts, chartContainer);
+                renderBar(hospitalName, outcomeCounts, chartContainer, outcomeDisplayOrder, outcomeColorClasses);
             });
 
             // Render chart legend (call separately to ensure all unique outcomes are collected)
@@ -716,8 +830,8 @@
             renderOutcomeChartLegend(relevantOutcomesForLegend);
         }
 
-        // Helper function to render a single bar (for hospital or overall)
-        function renderBar(name, outcomeCounts, containerElement) {
+        // Helper function to render a single bar (for hospital or overall) - Reusable for Age Chart
+        function renderBar(name, segmentCounts, containerElement, displayOrder, colorClasses) {
             const barItem = document.createElement('div');
             barItem.classList.add('bar-item');
 
@@ -731,14 +845,13 @@
 
             // Add event listeners for custom tooltip to the whole barBody
             barBody.addEventListener('mouseover', (e) => {
-                let tooltipText = `<b>${name}</b><br>ยอดรวมผู้ป่วย: ${outcomeCounts.total} ราย<br><br>แบ่งตามผลการรักษา:<br>`;
-                // Use outcomeDisplayOrder for tooltip content as well for consistency
-                outcomeDisplayOrder.forEach(outcome => {
-                    const count = outcomeCounts[outcome] || 0;
-                    if (count > 0 || outcome === 'ไม่ระบุ') { // Show 'ไม่ระบุ' even if 0 count for clarity
-                        const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
-                        const colorClass = outcomeColorClasses[outcome] || 'outcome-Undefined';
-                        tooltipText += `<span class="tooltip-color-dot ${colorClass}"></span> ${outcome}: ${count} ราย (${percentage}%)<br>`;
+                let tooltipText = `<b>${name}</b><br>ยอดรวม: ${segmentCounts.total} ราย<br><br>แบ่งตาม:<br>`;
+                displayOrder.forEach(segmentKey => {
+                    const count = segmentCounts[segmentKey] || 0;
+                    if (count > 0 || segmentKey.includes('ไม่ระบุ')) { // Show 'ไม่ระบุ' even if 0 count for clarity
+                        const percentage = segmentCounts.total > 0 ? ((count / segmentCounts.total) * 100).toFixed(1) : 0;
+                        const colorClass = colorClasses[segmentKey] || 'outcome-Undefined'; // Fallback for outcomes, or gender-UndefinedGender
+                        tooltipText += `<span class="tooltip-color-dot ${colorClass}"></span> ${segmentKey}: ${count} ราย (${percentage}%)<br>`;
                     }
                 });
                 showTooltip(e, tooltipText);
@@ -749,18 +862,18 @@
             });
 
             // Iterate through the predefined display order
-            outcomeDisplayOrder.forEach(outcome => {
-                const count = outcomeCounts[outcome] || 0;
-                const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
+            displayOrder.forEach(segmentKey => {
+                const count = segmentCounts[segmentKey] || 0;
+                const percentage = segmentCounts.total > 0 ? ((count / segmentCounts.total) * 100).toFixed(1) : 0;
 
                 if (parseFloat(percentage) > 0) { // Only create segment if there's data for it
                     const barSegment = document.createElement('div');
                     barSegment.classList.add('bar-segment');
-                    barSegment.classList.add(outcomeColorClasses[outcome] || 'outcome-Undefined'); // Apply color class
+                    barSegment.classList.add(colorClasses[segmentKey] || 'outcome-Undefined'); // Apply color class
                     barSegment.style.width = `${percentage}%`;
 
                     // Display percentage for segments with value > 0
-                    barSegment.textContent = `${percentage}%`;
+                    barSegment.textContent = `${percentage}%`; // MODIFIED LINE - Always show percentage if segment exists
 
                     barBody.appendChild(barSegment);
                 }
@@ -785,7 +898,8 @@
             const yOffset = 15;
 
             // Get boundaries of the chart container to prevent tooltip from going off-screen
-            const chartRect = document.getElementById('chartContainer').getBoundingClientRect();
+            // This needs to be robust, using body or document clientWidth/Height
+            const bodyRect = document.body.getBoundingClientRect();
             const tooltipRect = customTooltip.getBoundingClientRect();
 
             // Add scroll position to clientX/Y
@@ -793,11 +907,11 @@
             let newY = event.clientY + window.scrollY + yOffset;
 
             // Adjust X if tooltip goes off right edge
-            if (newX + tooltipRect.width > document.documentElement.clientWidth - 20 + window.scrollX) {
+            if (newX + tooltipRect.width > bodyRect.right - 20) {
                 newX = event.clientX + window.scrollX - tooltipRect.width - xOffset;
             }
             // Adjust Y if tooltip goes off bottom edge
-            if (newY + tooltipRect.height > document.documentElement.clientHeight - 20 + window.scrollY) {
+            if (newY + tooltipRect.height > bodyRect.bottom - 20) {
                 newY = event.clientY + window.scrollY - tooltipRect.height - yOffset;
             }
              // Ensure tooltip doesn't go off the left edge
@@ -819,7 +933,7 @@
             customTooltip.innerHTML = ''; // Clear text
         }
 
-        // Function to render the legend for the stacked bar chart
+        // Function to render the legend for the stacked bar chart (Outcomes)
         function renderOutcomeChartLegend(outcomesToDisplayInLegend) {
             const legendContainer = document.getElementById('outcomeChartLegend');
             legendContainer.innerHTML = ''; // Clear existing legend
@@ -844,6 +958,197 @@
             });
         }
 
+        // NEW: Function to render the legend for the gender chart
+        function renderGenderChartLegend() {
+            const legendContainer = document.getElementById('genderChartLegend');
+            legendContainer.innerHTML = ''; // Clear existing legend
+
+            genderDisplayOrder.forEach(gender => {
+                const legendItem = document.createElement('div');
+                legendItem.classList.add('gender-legend-item');
+
+                const colorBox = document.createElement('i');
+                colorBox.classList.add(genderColorClasses[gender]);
+                legendItem.appendChild(colorBox);
+
+                const label = document.createElement('span');
+                label.textContent = gender;
+                legendItem.appendChild(label);
+
+                legendContainer.appendChild(legendItem);
+            });
+        }
+
+        // NEW: Function to render the legend for the risk level chart
+        function renderRiskLevelChartLegend(levelsToDisplayInLegend) {
+            const legendContainer = document.getElementById('riskLevelChartLegend');
+            legendContainer.innerHTML = '';
+
+            if (levelsToDisplayInLegend.length === 0) {
+                return;
+            }
+
+            levelsToDisplayInLegend.forEach(level => {
+                const legendItem = document.createElement('div');
+                legendItem.classList.add('risk-legend-item'); // Reusing class for styling consistency
+
+                const colorBox = document.createElement('i');
+                colorBox.classList.add(riskLevelColorClasses[level]);
+                legendItem.appendChild(colorBox);
+
+                const label = document.createElement('span');
+                label.textContent = level;
+                legendItem.appendChild(label);
+
+                legendContainer.appendChild(legendItem);
+            });
+        }
+
+
+        // NEW: Function to determine age group
+        function getAgeGroup(age) {
+            if (age === null || age === undefined || isNaN(age)) return 'ไม่ระบุ/เกิน 100 ปี';
+            if (age >= 0 && age <= 4) return '0-4 ปี';
+            if (age >= 5 && age <= 9) return '5-9 ปี';
+            if (age >= 10 && age <= 14) return '10-14 ปี';
+            if (age >= 15 && age <= 24) return '15-24 ปี';
+            if (age >= 25 && age <= 34) return '25-34 ปี';
+            if (age >= 35 && age <= 44) return '35-44 ปี';
+            if (age >= 45 && age <= 54) return '45-54 ปี';
+            if (age >= 55 && age <= 64) return '55-64 ปี';
+            if (age >= 65 && age <= 100) return '65-100 ปี';
+            return 'ไม่ระบุ/เกิน 100 ปี'; // Fallback for ages > 100 or unexpected values
+        }
+
+        // NEW: Function to render Age Chart (Stacked by Gender)
+        function renderAgeChart(data) {
+            const ageChartContainer = document.getElementById('ageChart');
+            ageChartContainer.innerHTML = ''; // Clear existing bars
+
+            const ageGroupGenderCounts = {};
+            // Initialize all age groups with gender counts
+            ageGroupOrder.forEach(group => {
+                ageGroupGenderCounts[group] = { total: 0 };
+                genderDisplayOrder.forEach(gender => {
+                    ageGroupGenderCounts[group][gender] = 0;
+                });
+            });
+
+            let totalOverallPatients = 0;
+
+            data.features.forEach(feature => {
+                const age = feature.properties['อายุ'];
+                const gender = feature.properties['เพศ'] || 'ไม่ระบุเพศ'; // Use 'ไม่ระบุเพศ' if gender is null/undefined
+                const ageGroup = getAgeGroup(age);
+
+                if (ageGroupGenderCounts[ageGroup]) { // Ensure ageGroup exists in our predefined order
+                    ageGroupGenderCounts[ageGroup][gender]++;
+                    ageGroupGenderCounts[ageGroup].total++;
+                    totalOverallPatients++;
+                }
+            });
+
+            if (totalOverallPatients === 0) {
+                ageChartContainer.innerHTML = '<p style="text-align: center; color: #777;">ไม่มีข้อมูลช่วงอายุผู้ป่วยตามตัวกรองที่เลือก</p>';
+                document.getElementById('genderChartLegend').innerHTML = ''; // Clear legend too
+                return;
+            }
+
+            // Render the gender legend
+            renderGenderChartLegend();
+
+            // Render each age group bar
+            ageGroupOrder.forEach(group => {
+                const groupData = ageGroupGenderCounts[group];
+                // Only render a bar if there's any data for this age group
+                if (groupData.total > 0) {
+                    renderBar(group, groupData, ageChartContainer, genderDisplayOrder, genderColorClasses);
+                } else {
+                    // If no data, render a gray bar with 0%
+                    const barItem = document.createElement('div');
+                    barItem.classList.add('bar-item');
+
+                    const barLabel = document.createElement('div');
+                    barLabel.classList.add('bar-label');
+                    barLabel.textContent = group;
+                    barItem.appendChild(barLabel);
+
+                    const barBody = document.createElement('div');
+                    barBody.classList.add('bar-body'); // This will make it gray background
+                    barBody.textContent = '0 ราย (0.0%)'; // Explicitly show 0%
+                    barBody.style.justifyContent = 'center'; // Center the text
+
+                    // Tooltip for 0 data bars
+                    barBody.addEventListener('mouseover', (e) => {
+                        showTooltip(e, `<b>${group}</b>: 0 ราย (0.0%)`);
+                    });
+                    barBody.addEventListener('mouseout', hideTooltip);
+                    barBody.addEventListener('mousemove', (e) => {
+                        moveTooltip(e);
+                    });
+
+                    barItem.appendChild(barBody);
+                    ageChartContainer.appendChild(barItem);
+                }
+            });
+        }
+
+        // NEW: Function to render Risk Chart (Stacked by Risk Level)
+        function renderRiskChart(data) {
+            const riskChartContainer = document.getElementById('riskChart');
+            riskChartContainer.innerHTML = ''; // Clear existing bars
+
+            const riskGroupRiskLevelCounts = {};
+            const allRiskLevelsPresent = new Set(); // To collect all unique risk levels for the legend
+
+            data.features.forEach(feature => {
+                const riskGroup = feature.properties['กลุ่มเสี่ยง'] || 'ไม่ระบุกลุ่มเสี่ยง';
+                let riskLevel = feature.properties['ความเสี่ยง'] || 'ไม่ระบุความเสี่ยง'; // Use 'let' to allow modification
+
+                // Check if the riskLevel is explicitly defined in riskLevelDisplayOrder
+                // If not, and it belongs to 'ผู้ที่มีโรคหรือภาวะเสี่ยงต่อวัณโรค', map it to 'อื่นๆ'
+                if (riskGroup === 'ผู้ที่มีโรคหรือภาภาวะเสี่ยงต่อวัณโรค' &&
+                    !riskLevelDisplayOrder.includes(riskLevel) &&
+                    riskLevel !== 'ไม่ระบุความเสี่ยง' // Don't map 'ไม่ระบุความเสี่ยง' to 'อื่นๆ'
+                ) {
+                    riskLevel = 'อื่นๆ'; // Map unknown risk levels within this group to 'อื่นๆ'
+                } else if (!riskLevelDisplayOrder.includes(riskLevel) && riskLevel !== 'ไม่ระบุความเสี่ยง') {
+                    // For other groups, if risk level is not defined, map to 'ไม่ระบุความเสี่ยง'
+                    // Or consider if you have specific 'อื่นๆ' for other groups too
+                    riskLevel = 'ไม่ระบุความเสี่ยง';
+                }
+
+                if (!riskGroupRiskLevelCounts[riskGroup]) {
+                    riskGroupRiskLevelCounts[riskGroup] = { total: 0 };
+                }
+                if (!riskGroupRiskLevelCounts[riskGroup][riskLevel]) {
+                    riskGroupRiskLevelCounts[riskGroup][riskLevel] = 0;
+                }
+                riskGroupRiskLevelCounts[riskGroup][riskLevel]++;
+                riskGroupRiskLevelCounts[riskGroup].total++;
+
+                allRiskLevelsPresent.add(riskLevel);
+            });
+
+            // Sort risk groups by total count descending
+            const sortedRiskGroups = Object.entries(riskGroupRiskLevelCounts).sort(([, countsA], [, countsB]) => countsB.total - countsA.total);
+
+            if (sortedRiskGroups.length === 0) {
+                riskChartContainer.innerHTML = '<p style="text-align: center; color: #777;">ไม่มีข้อมูลกลุ่มเสี่ยงและความเสี่ยง</p>';
+                document.getElementById('riskLevelChartLegend').innerHTML = '';
+                return;
+            }
+
+            // Filter riskLevelDisplayOrder to only include levels actually present in the data for the legend
+            const relevantRiskLevelsForLegend = riskLevelDisplayOrder.filter(level => allRiskLevelsPresent.has(level));
+            renderRiskLevelChartLegend(relevantRiskLevelsForLegend);
+
+            // Render each risk group bar
+            sortedRiskGroups.forEach(([groupName, riskCounts]) => {
+                renderBar(groupName, riskCounts, riskChartContainer, riskLevelDisplayOrder, riskLevelColorClasses);
+            });
+        }
+
 
         // ฟังก์ชันหลักในการกรองและอัพเดทแผนที่
         function applyFilters() {
@@ -856,27 +1161,29 @@
             }
 
             let dataToProcessForMap = rawGeojsonData.features; // Start with all raw data for map
-            let dataToProcessForChart = rawGeojsonData.features; // Start with all raw data for chart
+            let dataToProcessForChart = rawGeojsonData.features; // Start with all raw data for charts (hospital and age)
 
-            // Filter for chart: Apply Hospital filter first
-            // Note: Overall province bar will still reflect ALL filtered data
+            // Apply Hospital filter to data for ALL charts and analysis
             if (selectedHospital !== 'ทั้งหมด') {
                 dataToProcessForChart = dataToProcessForChart.filter(feature =>
                     feature.properties['โรงพยาบาล'] === selectedHospital
                 );
-            }
-
-            // Filter for map: Apply all filters to raw data before aggregation for map display
-            if (selectedHospital !== 'ทั้งหมด') {
                 dataToProcessForMap = dataToProcessForMap.filter(feature =>
                     feature.properties['โรงพยาบาล'] === selectedHospital
                 );
             }
+
+            // Apply District filter to data for ALL charts and analysis
+            // This is the NEW part for dataToProcessForChart
             if (selectedDistrict !== 'ทั้งหมด') {
-                dataToProcessForMap = dataToProcessForMap.filter(feature =>
+                dataToProcessForChart = dataToProcessForChart.filter(feature =>
+                    feature.properties['อำเภอ'] === selectedDistrict
+                );
+                dataToProcessForMap = dataToProcessForMap.filter(feature => // This already exists for map
                     feature.properties['อำเภอ'] === selectedDistrict
                 );
             }
+
             // For the map, we aggregate after district/hospital filter
             let currentAggregatedDataForMap = aggregateData({ type: 'FeatureCollection', features: dataToProcessForMap });
 
@@ -935,7 +1242,9 @@
 
             updateLegend(selectedOutcome);
             addLabelsToMap(filteredGeoJSONForMap, selectedOutcome); // Update labels after filtering
-            renderStaticHospitalChart({ type: 'FeatureCollection', features: dataToProcessForChart }); // Update chart based on currently filtered raw data
+            renderStaticHospitalChart({ type: 'FeatureCollection', features: dataToProcessForChart }); // Update hospital chart based on currently filtered raw data
+            renderAgeChart({ type: 'FeatureCollection', features: dataToProcessForChart }); // NEW: Update age chart
+            renderRiskChart({ type: 'FeatureCollection', features: dataToProcessForChart }); // NEW: Update risk chart
 
             // Run AI analysis with the filtered raw data for the chart
             runAIAnalysis({ type: 'FeatureCollection', features: dataToProcessForChart });
@@ -951,23 +1260,23 @@
             try {
                 const totalPatients = data.features.length;
                 let hospitalOutcomeCounts = {}; // To aggregate data per hospital, similar to chart
-                let rrMdrAreaCounts = {}; // { 'อำเภอ - ตำบล': count, ... }
+                let rrMdrAreaCounts = {}; // { 'อำเภอ - ตำBln': count, ... }
 
                 data.features.forEach(f => {
                     const hospital = f.properties['โรงพยาบาล'] || 'ไม่ระบุ';
-                    const outcome = f.properties['ผลการรักษา'] || 'ไม่ระบุ'; // Fixed typo again for consistency
+                    const outcome = f.properties['ผลการรักษา'] || 'ไม่ระบุ';
 
                     if (!hospitalOutcomeCounts[hospital]) {
-                        hospitalOutcomeCounts[hospital] = { total: 0, 'Cured': 0, 'Completed': 0, 'Lost to follow-up': 0, 'Died': 0, 'On treatment':0, 'Change diagnosis':0, 'RR/MDR ก่อนเดือนที่ 5':0, 'Transferred out':0, 'Undefined':0, 'Failed':0 }; // Ensure all outcomes are initialized, added 'Failed'
+                        hospitalOutcomeCounts[hospital] = { total: 0, 'Cured': 0, 'Completed': 0, 'Lost to follow-up': 0, 'Died': 0, 'On treatment':0, 'Change diagnosis':0, 'RR/MDR ก่อนเดือนที่ 5':0, 'Transferred out':0, 'Undefined':0, 'Failed':0 };
                     }
                     hospitalOutcomeCounts[hospital].total++;
                     if (hospitalOutcomeCounts[hospital][outcome] !== undefined) {
                         hospitalOutcomeCounts[hospital][outcome]++;
-                    } else { // Handle outcomes not explicitly listed but present in data
+                    } else {
                          hospitalOutcomeCounts[hospital]['Undefined']++; // Fallback for unexpected outcomes
                     }
 
-                    // New: Aggregate RR/MDR by area
+                    // Aggregate RR/MDR by area
                     if (outcome === 'RR/MDR ก่อนเดือนที่ 5') {
                         const district = f.properties['อำเภอ'] || 'ไม่ระบุอำเภอ';
                         const tambon = f.properties['ตำบล'] || 'ไม่ระบุตำบล';
@@ -989,7 +1298,7 @@
                 let overallRRMDR = 0;
                 let overallTransferredOut = 0;
                 let overallUndefined = 0;
-                let overallFailed = 0; // New: Added Failed
+                let overallFailed = 0;
 
                 for (const hospital in hospitalOutcomeCounts) {
                     overallCured += hospitalOutcomeCounts[hospital]['Cured'];
@@ -1001,7 +1310,7 @@
                     overallRRMDR += hospitalOutcomeCounts[hospital]['RR/MDR ก่อนเดือนที่ 5'];
                     overallTransferredOut += hospitalOutcomeCounts[hospital]['Transferred out'];
                     overallUndefined += hospitalOutcomeCounts[hospital]['Undefined'];
-                    overallFailed += hospitalOutcomeCounts[hospital]['Failed']; // New: Added Failed
+                    overallFailed += hospitalOutcomeCounts[hospital]['Failed'];
                 }
 
 
@@ -1018,7 +1327,7 @@
                 const percLostToFollowUp = totalPatients > 0 ? ((overallLost / totalPatients) * 100).toFixed(1) : 0;
                 const percDied = totalPatients > 0 ? ((overallDied / totalPatients) * 100).toFixed(1) : 0;
                 const percUndefined = totalPatients > 0 ? ((overallUndefined / totalPatients) * 100).toFixed(1) : 0;
-                const percFailed = totalPatients > 0 ? ((overallFailed / totalPatients) * 100).toFixed(1) : 0; // New: Added Failed
+                const percFailed = totalPatients > 0 ? ((overallFailed / totalPatients) * 100).toFixed(1) : 0;
 
 
                 // Identify top/bottom performing hospitals based on success rate
@@ -1105,7 +1414,7 @@
                     }
                     analysisContent += `<p>สามารถดูรายละเอียดผลงานของแต่ละโรงพยาบาลได้จากกราฟแท่งด้านบน.</p>`;
 
-                    // Section 3: การเฝ้าระวังผู้ป่วยดื้อยา (RR/MDR) - NEW SECTION
+                    // Section 3: การเฝ้าระวังผู้ป่วยดื้อยา (RR/MDR)
                     analysisContent += `<h3>การเฝ้าระวังผู้ป่วยดื้อยา (RR/MDR)</h3>`;
                     const rrMdrAreas = Object.entries(rrMdrAreaCounts).filter(([, count]) => count > 0).sort((a, b) => b[1] - a[1]);
 
@@ -1120,7 +1429,7 @@
                     }
 
 
-                    // Section 4: ข้อสังเกตและคำแนะนำ (เดิมเป็น Section 3)
+                    // Section 4: ข้อสังเกตและคำแนะนำ
                     analysisContent += `<h3>ข้อสังเกตและคำแนะนำ</h3>`;
                     analysisContent += `<p>หากดูจากข้อมูลที่ผ่านมา มีข้อสังเกตและคำแนะนำดังนี้:</p><ul>`;
 
@@ -1137,7 +1446,7 @@
                     if (parseFloat(overallDiedPercentage) > 5) {
                         analysisContent += `<li><b>อัตราเสียชีวิตสูง:</b> ผู้ป่วยวัณโรคเสียชีวิตค่อนข้างมาก ควรตรวจสอบว่ามีสาเหตุใดที่สามารถป้องกันได้ และปรับปรุงการดูแลผู้ป่วยกลุ่มที่มีอาการหนักหรือมีโรคประจำตัว.</li>`;
                     }
-                    // New: Add advice for Failed if present
+                    // Add advice for Failed if present
                     if (parseFloat(percFailed) > 0 && parseFloat(percFailed) > parseFloat(percLostToFollowUp) && parseFloat(percFailed) > parseFloat(percDied)) { // Simple heuristic
                          analysisContent += `<li><b>ผลการรักษาล้มเหลว:</b> พบผู้ป่วยมีผลการรักษาล้มเหลว (${percFailed}%) ซึ่งบ่งชี้ว่าการรักษาอาจไม่เป็นไปตามแผน ควรทบทวนแนวทางการรักษาและพิจารณาปัจจัยที่ทำให้การรักษาไม่ได้ผล.</li>`;
                     }
@@ -1211,6 +1520,8 @@
                 addLabelsToMap(allAggregatedData, document.getElementById('outcome-filter').value);
                 // Initial chart render with all raw data
                 renderStaticHospitalChart(rawGeojsonData);
+                renderAgeChart(rawGeojsonData); // Initial render of age chart
+                renderRiskChart(rawGeojsonData); // Initial render of risk chart
 
                 // Initial AI analysis run after everything loads
                 runAIAnalysis(rawGeojsonData);
