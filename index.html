@@ -497,7 +497,7 @@
                 const props = feature.properties;
                 const geoKey = `${props['จังหวัด']}-${props['อำเภอ']}-${props['ตำบล']}`;
                 // Use 'ไม่ระบุ' if outcome is null or undefined
-                const outcome = props['ผลการรักษา'] || 'ไม่ระระบุ'; // Fixed typo here, was 'ไม่ระบุ'
+                const outcome = props['ผลการรักษา'] || 'ไม่ระบุ'; // Fixed typo here, was 'ไม่ระบุ'
 
                 if (!aggregatedFeatures[geoKey]) {
                     aggregatedFeatures[geoKey] = {
@@ -951,10 +951,11 @@
             try {
                 const totalPatients = data.features.length;
                 let hospitalOutcomeCounts = {}; // To aggregate data per hospital, similar to chart
+                let rrMdrAreaCounts = {}; // { 'อำเภอ - ตำบล': count, ... }
 
                 data.features.forEach(f => {
                     const hospital = f.properties['โรงพยาบาล'] || 'ไม่ระบุ';
-                    const outcome = f.properties['ผลการรักษา'] || 'ไม่ระบุ';
+                    const outcome = f.properties['ผลการรักษา'] || 'ไม่ระบุ'; // Fixed typo again for consistency
 
                     if (!hospitalOutcomeCounts[hospital]) {
                         hospitalOutcomeCounts[hospital] = { total: 0, 'Cured': 0, 'Completed': 0, 'Lost to follow-up': 0, 'Died': 0, 'On treatment':0, 'Change diagnosis':0, 'RR/MDR ก่อนเดือนที่ 5':0, 'Transferred out':0, 'Undefined':0, 'Failed':0 }; // Ensure all outcomes are initialized, added 'Failed'
@@ -964,6 +965,17 @@
                         hospitalOutcomeCounts[hospital][outcome]++;
                     } else { // Handle outcomes not explicitly listed but present in data
                          hospitalOutcomeCounts[hospital]['Undefined']++; // Fallback for unexpected outcomes
+                    }
+
+                    // New: Aggregate RR/MDR by area
+                    if (outcome === 'RR/MDR ก่อนเดือนที่ 5') {
+                        const district = f.properties['อำเภอ'] || 'ไม่ระบุอำเภอ';
+                        const tambon = f.properties['ตำบล'] || 'ไม่ระบุตำบล';
+                        const areaKey = `${district} - ${tambon}`;
+                        if (!rrMdrAreaCounts[areaKey]) {
+                            rrMdrAreaCounts[areaKey] = 0;
+                        }
+                        rrMdrAreaCounts[areaKey]++;
                     }
                 });
 
@@ -1093,8 +1105,22 @@
                     }
                     analysisContent += `<p>สามารถดูรายละเอียดผลงานของแต่ละโรงพยาบาลได้จากกราฟแท่งด้านบน.</p>`;
 
+                    // Section 3: การเฝ้าระวังผู้ป่วยดื้อยา (RR/MDR) - NEW SECTION
+                    analysisContent += `<h3>การเฝ้าระวังผู้ป่วยดื้อยา (RR/MDR)</h3>`;
+                    const rrMdrAreas = Object.entries(rrMdrAreaCounts).filter(([, count]) => count > 0).sort((a, b) => b[1] - a[1]);
 
-                    // Section 3: ข้อสังเกตและคำแนะนำ
+                    if (rrMdrAreas.length > 0) {
+                        analysisContent += `<p>พบผู้ป่วยที่วินิจฉัยว่าเป็นวัณโรคดื้อยา (RR/MDR) จำนวน <b>${overallRRMDR} ราย</b> ในพื้นที่ดังต่อไปนี้ (เรียงตามจำนวนมากไปน้อย):</p><ul>`;
+                        rrMdrAreas.forEach(([area, count]) => {
+                            analysisContent += `<li><b>${area}</b>: ${count} ราย</li>`;
+                        });
+                        analysisContent += `</ul><p>การเฝ้าระวังและติดตามผู้ป่วยในพื้นที่เหล่านี้อย่างใกล้ชิดมีความสำคัญอย่างยิ่ง เพื่อป้องกันการแพร่กระจายของเชื้อดื้อยาและควบคุมสถานการณ์ในระยะยาว.</p>`;
+                    } else {
+                        analysisContent += `<p>ไม่พบผู้ป่วยวัณโรคดื้อยา (RR/MDR) ในข้อมูลที่เลือก.</p>`;
+                    }
+
+
+                    // Section 4: ข้อสังเกตและคำแนะนำ (เดิมเป็น Section 3)
                     analysisContent += `<h3>ข้อสังเกตและคำแนะนำ</h3>`;
                     analysisContent += `<p>หากดูจากข้อมูลที่ผ่านมา มีข้อสังเกตและคำแนะนำดังนี้:</p><ul>`;
 
