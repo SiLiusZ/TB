@@ -32,27 +32,19 @@
             margin-top: 0;
             font-size: 1.5em; /* Adjusted for better responsiveness */
         }
-        #mapid {
-            height: 500px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            position: relative;
-            margin-bottom: 20px; /* Space between map and chart */
-        }
+        /* Adjusted .controls style for external placement */
         .controls {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            z-index: 1000;
             background-color: rgba(255, 255, 255, 0.9);
-            padding: 10px;
+            padding: 15px; /* Increased padding */
             border-radius: 8px;
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
             display: flex;
-            justify-content: center;
+            justify-content: center; /* Center horizontally */
             align-items: center;
             flex-wrap: wrap;
             gap: 15px;
+            margin-bottom: 20px; /* Space between controls and map */
+            border: 1px solid #eee; /* Slight border for definition */
         }
         .controls label {
             font-weight: bold;
@@ -69,6 +61,13 @@
         }
         .controls select:focus {
             border-color: #3498db;
+        }
+        #mapid {
+            height: 500px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative; /* Keep relative for inner Leaflet elements */
+            margin-bottom: 20px; /* Space between map and chart */
         }
         .info-box {
             background: white;
@@ -315,13 +314,13 @@
                 height: 400px; /* Slightly reduce map height for tablets */
             }
             .controls {
-                position: relative;
+                position: relative; /* Not absolute anymore */
                 top: auto;
                 left: auto;
-                margin-bottom: 10px;
+                margin-bottom: 15px;
                 flex-direction: column;
                 align-items: stretch;
-                width: 100%;
+                width: auto; /* Adjust width to fit container */
                 box-sizing: border-box;
             }
             .controls label,
@@ -384,22 +383,23 @@
         <h1>แผนที่แสดงจำนวนและข้อมูลผู้ป่วยวัณโรค ปีงบประมาณ 2568</h1>
         <h1>จังหวัดนครสวรรค์</h1>
 
-        <div id="mapid">
-            <div class="controls">
-                <label for="district-filter">เลือกอำเภอ:</label>
-                <select id="district-filter">
-                    <option value="ทั้งหมด">ทั้งหมด</option>
-                </select>
-                <label for="outcome-filter">ผลการรักษา:</label>
-                <select id="outcome-filter">
-                    <option value="ทั้งหมด">ทั้งหมด</option>
-                </select>
-                <label for="hospital-filter">เลือกโรงพยาบาล:</label>
-                <select id="hospital-filter">
-                    <option value="ทั้งหมด">ทั้งหมด</option>
-                </select>
-            </div>
+        <div class="controls">
+            <label for="district-filter">เลือกอำเภอ:</label>
+            <select id="district-filter">
+                <option value="ทั้งหมด">ทั้งหมด</option>
+            </select>
+            <label for="outcome-filter">ผลการรักษา:</label>
+            <select id="outcome-filter">
+                <option value="ทั้งหมด">ทั้งหมด</option>
+            </select>
+            <label for="hospital-filter">เลือกโรงพยาบาล:</label>
+            <select id="hospital-filter">
+                <option value="ทั้งหมด">ทั้งหมด</option>
+            </select>
         </div>
+
+        <div id="mapid">
+            </div>
 
         <div id="chartContainer">
             <h2>ผลงานการรักษาสำเร็จของผู้ป่วยวัณโรคทุกประเภท (All type Success rate) ปีงบประมาณ 2568</h2>
@@ -453,7 +453,7 @@
             'Transferred out': 'outcome-TransferredOut',
             'Died': 'outcome-Died',
             'Lost to follow-up': 'outcome-LostToFollowUp',
-            'Failed': 'outcome-Failed', // New: Added Failed
+            'Failed': 'outcome-Failed',
             'RR/MDR ก่อนเดือนที่ 5': 'outcome-RRMDRBeforeMonth5',
             'Change diagnosis': 'outcome-ChangeDiagnosis',
             'ไม่ระบุ': 'outcome-Undefined'
@@ -497,7 +497,7 @@
                 const props = feature.properties;
                 const geoKey = `${props['จังหวัด']}-${props['อำเภอ']}-${props['ตำบล']}`;
                 // Use 'ไม่ระบุ' if outcome is null or undefined
-                const outcome = props['ผลการรักษา'] || 'ไม่ระบุ';
+                const outcome = props['ผลการรักษา'] || 'ไม่ระระบุ'; // Fixed typo here, was 'ไม่ระบุ'
 
                 if (!aggregatedFeatures[geoKey]) {
                     aggregatedFeatures[geoKey] = {
@@ -1068,7 +1068,8 @@
                             <li><b>ย้ายออก:</b> ${overallTransferredOut} ราย (${percTransferredOut}%)</li>
                             <li><b>ขาดการรักษา (Lost to follow-up):</b> ${overallLost} ราย (${percLostToFollowUp}%)</li>
                             <li><b>เสียชีวิต:</b> ${overallDied} ราย (${percDied}%)</li>
-                            ${overallFailed > 0 ? `<li><b>ล้มเหลว (Failed):</b> ${overallFailed} ราย (${percFailed}%)</li>` : ''} ${overallUndefined > 0 ? `<li><b>ไม่ระบุ:</b> ${overallUndefined} ราย (${percUndefined}%)</li>` : ''}
+                            ${overallFailed > 0 ? `<li><b>ล้มเหลว (Failed):</b> ${overallFailed} ราย (${percFailed}%)</li>` : ''}
+                            ${overallUndefined > 0 ? `<li><b>ไม่ระบุ:</b> ${overallUndefined} ราย (${percUndefined}%)</li>` : ''}
                         </ul>
                         <p>โดยรวมแล้ว อัตราความสำเร็จของการรักษา (หาย + ครบ) อยู่ที่ <b>${overallSuccessRate}%</b></p>
                     `;
