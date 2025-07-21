@@ -216,15 +216,17 @@
 
 
         /* Define colors for each outcome */
-        .outcome-ChangeDiagnosis { background-color: #FF6347; /* Tomato */ }
-        .outcome-Completed { background-color: #4CAF50; /* Green */ }
-        .outcome-Cured { background-color: #2196F3; /* Blue */ }
-        .outcome-Died { background-color: #F44336; /* Red */ }
-        .outcome-LostToFollowUp { background-color: #FFC107; /* Amber */ }
-        .outcome-OnTreatment { background-color: #9C27B0; /* Purple */ }
-        .outcome-RRMDRBeforeMonth5 { background-color: #FF9800; /* Orange */ }
-        .outcome-TransferredOut { background-color: #607D8B; /* Blue Grey */ }
-        .outcome-Undefined { background-color: #B0BEC5; /* Light Blue Grey for 'ไม่ระบุ' */ } /* Added for 'ไม่ระระบุ' */
+        /* Updated colors based on user request */
+        .outcome-Completed { background-color: #4CAF50; /* เขียว */ }
+        .outcome-Cured { background-color: #006400; /* เขียวเข้ม */ }
+        .outcome-OnTreatment { background-color: #87CEEB; /* ฟ้า */ }
+        .outcome-TransferredOut { background-color: #CFD8DC; /* เทาอ่อน */ }
+        .outcome-Died { background-color: #F44336; /* แดง */ }
+        .outcome-LostToFollowUp { background-color: #FFC107; /* เหลืองส้ม */ }
+        .outcome-Failed { background-color: #9932CC; /* ม่วง */ }
+        .outcome-RRMDRBeforeMonth5 { background-color: #FF9800; /* ส้ม */ }
+        .outcome-ChangeDiagnosis { background-color: #616161; /* เทาเข้ม */ }
+        .outcome-Undefined { background-color: #B0BEC5; /* Light Blue Grey for 'ไม่ระบุ' */ }
 
 
         /* Styles for AI Analysis Section */
@@ -406,7 +408,7 @@
         </div>
 
         <div id="analysisResults">
-            <h2>ผลการวิเคราะห์ข้อมูลผู้ป่วยวัณโรค</h2>
+            <h2>ผลการวิเคราะห์ข้อมูลผู้ป่วยวัณโรค (โดย AI)</h2>
             <div id="analysisParagraphs">
                 <p>กำลังโหลดผลการวิเคราะห์...</p>
             </div>
@@ -428,19 +430,33 @@
         let legend;
         const customTooltip = document.getElementById('customTooltip');
 
+        // Define the desired order for outcomes in the chart and legend
+        const outcomeDisplayOrder = [
+            'Completed',
+            'Cured',
+            'On treatment',
+            'Transferred out',
+            'Died',
+            'Lost to follow-up',
+            'Failed', // Assuming 'Failed' might exist or be added.
+            'RR/MDR ก่อนเดือนที่ 5',
+            'Change diagnosis',
+            'ไม่ระบุ' // Always include 'ไม่ระบุ' at the end
+        ];
 
         // Define a mapping from outcome names to CSS class names for colors
         // Ensure this list is exhaustive of all possible outcomes
         const outcomeColorClasses = {
-            'Change diagnosis': 'outcome-ChangeDiagnosis',
             'Completed': 'outcome-Completed',
             'Cured': 'outcome-Cured',
+            'On treatment': 'outcome-OnTreatment',
+            'Transferred out': 'outcome-TransferredOut',
             'Died': 'outcome-Died',
             'Lost to follow-up': 'outcome-LostToFollowUp',
-            'On treatment': 'outcome-OnTreatment',
+            'Failed': 'outcome-Failed', // New: Added Failed
             'RR/MDR ก่อนเดือนที่ 5': 'outcome-RRMDRBeforeMonth5',
-            'Transferred out': 'outcome-TransferredOut',
-            'ไม่ระบุ': 'outcome-Undefined' // For cases where outcome is missing
+            'Change diagnosis': 'outcome-ChangeDiagnosis',
+            'ไม่ระบุ': 'outcome-Undefined'
         };
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -481,7 +497,7 @@
                 const props = feature.properties;
                 const geoKey = `${props['จังหวัด']}-${props['อำเภอ']}-${props['ตำบล']}`;
                 // Use 'ไม่ระบุ' if outcome is null or undefined
-                const outcome = props['ผลการรักษา'] || 'ไม่ระระบุ';
+                const outcome = props['ผลการรักษา'] || 'ไม่ระบุ';
 
                 if (!aggregatedFeatures[geoKey]) {
                     aggregatedFeatures[geoKey] = {
@@ -536,6 +552,8 @@
             <b>แบ่งตามผลการรักษา:</b><br>
         `;
 
+            // Sort outcomes for popup consistently (alphabetically or by custom order if desired for popup too)
+            // For popup, alphabetical sorting is generally fine for readability
             const sortedOutcomes = Object.keys(props.outcome_counts).sort();
             for (const outcome of sortedOutcomes) {
                 const outcomeCount = props.outcome_counts[outcome] || 0;
@@ -684,20 +702,22 @@
 
             // Render Overall Province Bar (if there's data)
             if (overallProvinceCounts.total > 0) {
-                renderBar('ภาพรวมจังหวัดนครสวรรค์', overallProvinceCounts, allOutcomesPresent, chartContainer);
+                renderBar('ภาพรวมจังหวัดนครสวรรค์', overallProvinceCounts, chartContainer);
             }
 
             // Render individual hospital bars
             sortedHospitals.forEach(([hospitalName, outcomeCounts]) => {
-                renderBar(hospitalName, outcomeCounts, allOutcomesPresent, chartContainer);
+                renderBar(hospitalName, outcomeCounts, chartContainer);
             });
 
             // Render chart legend (call separately to ensure all unique outcomes are collected)
-            renderOutcomeChartLegend(Array.from(allOutcomesPresent).sort());
+            // Filter outcomeDisplayOrder to only include outcomes actually present in the data for the legend
+            const relevantOutcomesForLegend = outcomeDisplayOrder.filter(outcome => allOutcomesPresent.has(outcome));
+            renderOutcomeChartLegend(relevantOutcomesForLegend);
         }
 
         // Helper function to render a single bar (for hospital or overall)
-        function renderBar(name, outcomeCounts, allOutcomesPresent, containerElement) {
+        function renderBar(name, outcomeCounts, containerElement) {
             const barItem = document.createElement('div');
             barItem.classList.add('bar-item');
 
@@ -712,14 +732,15 @@
             // Add event listeners for custom tooltip to the whole barBody
             barBody.addEventListener('mouseover', (e) => {
                 let tooltipText = `<b>${name}</b><br>ยอดรวมผู้ป่วย: ${outcomeCounts.total} ราย<br><br>แบ่งตามผลการรักษา:<br>`;
-                const sortedOutcomesForTooltip = Object.keys(outcomeCounts).filter(k => k !== 'total').sort();
-                for (const outcome of sortedOutcomesForTooltip) {
+                // Use outcomeDisplayOrder for tooltip content as well for consistency
+                outcomeDisplayOrder.forEach(outcome => {
                     const count = outcomeCounts[outcome] || 0;
-                    const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
-                    // Add a colored span before the outcome name in the tooltip
-                    const colorClass = outcomeColorClasses[outcome] || 'outcome-Undefined';
-                    tooltipText += `<span class="tooltip-color-dot ${colorClass}"></span> ${outcome}: ${count} ราย (${percentage}%)<br>`;
-                }
+                    if (count > 0 || outcome === 'ไม่ระบุ') { // Show 'ไม่ระบุ' even if 0 count for clarity
+                        const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
+                        const colorClass = outcomeColorClasses[outcome] || 'outcome-Undefined';
+                        tooltipText += `<span class="tooltip-color-dot ${colorClass}"></span> ${outcome}: ${count} ราย (${percentage}%)<br>`;
+                    }
+                });
                 showTooltip(e, tooltipText);
             });
             barBody.addEventListener('mouseout', hideTooltip);
@@ -727,14 +748,12 @@
                 moveTooltip(e);
             });
 
-            // Sort outcomes alphabetically for consistent display within bars
-            const sortedOutcomes = Array.from(allOutcomesPresent).sort();
-
-            sortedOutcomes.forEach(outcome => {
+            // Iterate through the predefined display order
+            outcomeDisplayOrder.forEach(outcome => {
                 const count = outcomeCounts[outcome] || 0;
                 const percentage = outcomeCounts.total > 0 ? ((count / outcomeCounts.total) * 100).toFixed(1) : 0;
 
-                if (percentage > 0) { // Only create segment if there's data for it
+                if (parseFloat(percentage) > 0) { // Only create segment if there's data for it
                     const barSegment = document.createElement('div');
                     barSegment.classList.add('bar-segment');
                     barSegment.classList.add(outcomeColorClasses[outcome] || 'outcome-Undefined'); // Apply color class
@@ -801,15 +820,15 @@
         }
 
         // Function to render the legend for the stacked bar chart
-        function renderOutcomeChartLegend(outcomes) {
+        function renderOutcomeChartLegend(outcomesToDisplayInLegend) {
             const legendContainer = document.getElementById('outcomeChartLegend');
             legendContainer.innerHTML = ''; // Clear existing legend
 
-            if (outcomes.length === 0) {
+            if (outcomesToDisplayInLegend.length === 0) {
                 return;
             }
 
-            outcomes.forEach(outcome => {
+            outcomesToDisplayInLegend.forEach(outcome => {
                 const legendItem = document.createElement('div');
                 legendItem.classList.add('outcome-legend-item');
 
@@ -938,7 +957,7 @@
                     const outcome = f.properties['ผลการรักษา'] || 'ไม่ระบุ';
 
                     if (!hospitalOutcomeCounts[hospital]) {
-                        hospitalOutcomeCounts[hospital] = { total: 0, 'Cured': 0, 'Completed': 0, 'Lost to follow-up': 0, 'Died': 0, 'On treatment':0, 'Change diagnosis':0, 'RR/MDR ก่อนเดือนที่ 5':0, 'Transferred out':0, 'Undefined':0 }; // Ensure all outcomes are initialized
+                        hospitalOutcomeCounts[hospital] = { total: 0, 'Cured': 0, 'Completed': 0, 'Lost to follow-up': 0, 'Died': 0, 'On treatment':0, 'Change diagnosis':0, 'RR/MDR ก่อนเดือนที่ 5':0, 'Transferred out':0, 'Undefined':0, 'Failed':0 }; // Ensure all outcomes are initialized, added 'Failed'
                     }
                     hospitalOutcomeCounts[hospital].total++;
                     if (hospitalOutcomeCounts[hospital][outcome] !== undefined) {
@@ -958,7 +977,7 @@
                 let overallRRMDR = 0;
                 let overallTransferredOut = 0;
                 let overallUndefined = 0;
-
+                let overallFailed = 0; // New: Added Failed
 
                 for (const hospital in hospitalOutcomeCounts) {
                     overallCured += hospitalOutcomeCounts[hospital]['Cured'];
@@ -970,7 +989,7 @@
                     overallRRMDR += hospitalOutcomeCounts[hospital]['RR/MDR ก่อนเดือนที่ 5'];
                     overallTransferredOut += hospitalOutcomeCounts[hospital]['Transferred out'];
                     overallUndefined += hospitalOutcomeCounts[hospital]['Undefined'];
-
+                    overallFailed += hospitalOutcomeCounts[hospital]['Failed']; // New: Added Failed
                 }
 
 
@@ -987,6 +1006,7 @@
                 const percLostToFollowUp = totalPatients > 0 ? ((overallLost / totalPatients) * 100).toFixed(1) : 0;
                 const percDied = totalPatients > 0 ? ((overallDied / totalPatients) * 100).toFixed(1) : 0;
                 const percUndefined = totalPatients > 0 ? ((overallUndefined / totalPatients) * 100).toFixed(1) : 0;
+                const percFailed = totalPatients > 0 ? ((overallFailed / totalPatients) * 100).toFixed(1) : 0; // New: Added Failed
 
 
                 // Identify top/bottom performing hospitals based on success rate
@@ -1048,7 +1068,7 @@
                             <li><b>ย้ายออก:</b> ${overallTransferredOut} ราย (${percTransferredOut}%)</li>
                             <li><b>ขาดการรักษา (Lost to follow-up):</b> ${overallLost} ราย (${percLostToFollowUp}%)</li>
                             <li><b>เสียชีวิต:</b> ${overallDied} ราย (${percDied}%)</li>
-                            ${overallUndefined > 0 ? `<li><b>ไม่ระบุ:</b> ${overallUndefined} ราย (${percUndefined}%)</li>` : ''}
+                            ${overallFailed > 0 ? `<li><b>ล้มเหลว (Failed):</b> ${overallFailed} ราย (${percFailed}%)</li>` : ''} ${overallUndefined > 0 ? `<li><b>ไม่ระบุ:</b> ${overallUndefined} ราย (${percUndefined}%)</li>` : ''}
                         </ul>
                         <p>โดยรวมแล้ว อัตราความสำเร็จของการรักษา (หาย + ครบ) อยู่ที่ <b>${overallSuccessRate}%</b></p>
                     `;
@@ -1090,6 +1110,11 @@
                     if (parseFloat(overallDiedPercentage) > 5) {
                         analysisContent += `<li><b>อัตราเสียชีวิตสูง:</b> ผู้ป่วยวัณโรคเสียชีวิตค่อนข้างมาก ควรตรวจสอบว่ามีสาเหตุใดที่สามารถป้องกันได้ และปรับปรุงการดูแลผู้ป่วยกลุ่มที่มีอาการหนักหรือมีโรคประจำตัว.</li>`;
                     }
+                    // New: Add advice for Failed if present
+                    if (parseFloat(percFailed) > 0 && parseFloat(percFailed) > parseFloat(percLostToFollowUp) && parseFloat(percFailed) > parseFloat(percDied)) { // Simple heuristic
+                         analysisContent += `<li><b>ผลการรักษาล้มเหลว:</b> พบผู้ป่วยมีผลการรักษาล้มเหลว (${percFailed}%) ซึ่งบ่งชี้ว่าการรักษาอาจไม่เป็นไปตามแผน ควรทบทวนแนวทางการรักษาและพิจารณาปัจจัยที่ทำให้การรักษาไม่ได้ผล.</li>`;
+                    }
+
                     analysisContent += `</ul><p>การปรับปรุงจุดที่พบปัญหาจะช่วยให้การควบคุมวัณโรคในจังหวัดนครสวรรค์ดีขึ้นได้.</p>`;
                 }
 
@@ -1117,7 +1142,7 @@
                     const outcome = feature.properties['ผลการรักษา'] || 'ไม่ระบุ';
                     allOutcomes.add(outcome);
                 });
-                const outcomes = [...allOutcomes].sort();
+                const outcomes = [...allOutcomes].sort(); // Keep this for the filter dropdown, it's alphabetical
 
                 const hospitals = [...new Set(rawGeojsonData.features.map(f => f.properties['โรงพยาบาล']))].sort(); // Extract hospitals from raw data
 
