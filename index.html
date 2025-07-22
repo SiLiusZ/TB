@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>แผนที่แสดงข้อมูลผู้ป่วย</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+
+    <div class="container">
+        <h1>แผนที่แสดงจำนวนและข้อมูลผู้ป่วยวัณโรค ปีงบประมาณ 2568</h1>
+        <h1>จังหวัดนครสวรรค์</h1>
+
+        <div class="controls">
+            <label for="district-filter">เลือกอำเภอ:</label>
+            <select id="district-filter">
+                <option value="ทั้งหมด">ทั้งหมด</option>
+            </select>
+            <label for="outcome-filter">ผลการรักษา:</label>
+            <select id="outcome-filter">
+                <option value="ทั้งหมด">ทั้งหมด</option>
+            </select>
+            <label for="hospital-filter">เลือกโรงพยาบาล:</label>
+            <select id="hospital-filter">
+                <option value="ทั้งหมด">ทั้งหมด</option>
+            </select>
+        </div>
+
+        <div id="mapid">
+            </div>
+
+        <div id="chartContainer" class="chart-section">
+            <h2>ผลงานการรักษาสำเร็จของผู้ป่วยวัณโรคทุกประเภท (All type Success rate) ปีงบประมาณ 2568</h2>
+            <div id="outcomeChartLegend" class="outcome-legend"></div>
+            <div id="staticHospitalChart" class="stacked-bar-chart">
+                <p style="text-align: center; color: #777;">กำลังโหลดข้อมูล...</p>
+            </div>
+            <p style="font-size: 0.9em; color: #777; text-align: right; margin-top: 10px;">
+                *หมายเหตุ: สำหรับแถบที่มีจำนวนน้อยมาก ความยาวอาจถูกปรับเพื่อให้อ่านตัวเลขได้ชัดเจนขึ้น
+            </p>
+        </div>
+
+        <div id="ageChartContainer" class="chart-section">
+            <h2>จำนวนผู้ป่วยแยกตามช่วงอายุและเพศ</h2>
+            <div id="genderChartLegend" class="gender-legend"></div>
+            <div id="ageChart" class="stacked-bar-chart"></div>
+            <p style="font-size: 0.9em; color: #777; text-align: right; margin-top: 10px;">
+                *หมายเหตุ: สำหรับแถบที่มีจำนวนน้อยมาก ความยาวอาจถูกปรับเพื่อให้อ่านตัวเลขได้ชัดเจนขึ้น
+            </p>
+        </div>
+
+        <div id="riskChartContainer" class="chart-section">
+            <h2>จำนวนผู้ป่วยแยกตามกลุ่มเสี่ยงและความเสี่ยง</h2>
+            <div id="riskLevelChartLegend" class="risk-legend"></div>
+            <div id="riskChart" class="stacked-bar-chart"></div>
+            <p style="font-size: 0.9em; color: #777; text-align: right; margin-top: 10px;">
+                *หมายเหตุ: สำหรับแถบที่มีจำนวนน้อยมาก ความยาวอาจถูกปรับเพื่อให้อ่านตัวเลขได้ชัดเจนขึ้น
+            </p>
+        </div>
+
+        <div id="comorbidityChartContainer" class="chart-section">
+            <h2>จำนวนผู้ป่วยแยกตามโรคร่วม</h2>
+            <div id="comorbidityChartLegend" class="comorbidity-legend"></div>
+            <div id="comorbidityChart" class="horizontal-bar-chart"></div>
+            <p style="font-size: 0.9em; color: #777; text-align: right; margin-top: 10px;">
+                *หมายเหตุ: สำหรับแถบที่มีจำนวนน้อยมาก ความยาวอาจถูกปรับเพื่อให้อ่านตัวเลขได้ชัดเจนขึ้น
+            </p>
+        </div>
+
+        <div id="analysisResults">
+            <h2>ผลการวิเคราะห์ข้อมูลผู้ป่วยวัณโรค (โดย AI)</h2>
+            <div id="analysisParagraphs">
+                <p>กำลังโหลดผลการวิเคราะห์...</p>
+            </div>
+        </div>
+
+    </div>
+    <div id="customTooltip" class="custom-tooltip"></div>
+    <script src="script.js"></script>
+</body>
+
+</html>
