@@ -1,0 +1,637 @@
+body {
+    font-family: 'Kanit', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f0f2f5;
+    color: #333;
+}
+#customTooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.85);
+    color: #fff;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 13px;
+    pointer-events: none;
+    /* Allows mouse events to pass through */
+    opacity: 0;
+    /* Initially hidden */
+    transition: opacity 0.2s ease-in-out;
+    z-index: 9999;
+    /* Ensure it's on top */
+    white-space: pre-line;
+    /* Allow text wrapping for multiple lines */
+    text-align: left;
+}
+
+#customTooltip.show {
+    opacity: 1;
+}
+.container {
+    width: 95%;
+    max-width: 1200px;
+    margin: 20px auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-top: 0;
+    font-size: 1.5em;
+    /* Adjusted for better responsiveness */
+}
+
+/* Adjusted .controls style for external placement */
+.controls {
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    /* Increased padding */
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 20px;
+    /* Space between controls and map */
+    border: 1px solid #eee;
+    /* Slight border for definition */
+}
+
+.controls label {
+    font-weight: bold;
+    color: #555;
+}
+
+.controls select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.3s;
+}
+
+.controls select:focus {
+    border-color: #3498db;
+}
+
+#mapid {
+    height: 500px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+    /* Keep relative for inner Leaflet elements */
+    margin-bottom: 20px;
+    /* Space between map and chart */
+}
+
+.info-box {
+    background: white;
+    padding: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    font-size: 14px;
+}
+
+.legend {
+    line-height: 18px;
+    color: #555;
+    background: white;
+    padding: 6px 8px;
+    border-radius: 5px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.map-label-div-icon {
+    font-size: 12px;
+    font-weight: bold;
+    color: #4a4a4a;
+    text-align: center;
+    line-height: 1.2;
+    white-space: nowrap;
+    border-radius: 4px;
+    padding: 3px 6px;
+    background-color: rgba(255, 255, 255, 0.7);
+    border: 1px solid #ccc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+#chartContainer,
+#ageChartContainer,
+#riskChartContainer,
+#comorbidityChartContainer {
+    /* Added #comorbidityChartContainer */
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Styles for the stacked horizontal bar chart */
+.stacked-bar-chart,
+.horizontal-bar-chart {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* Space between bars */
+    padding-top: 15px;
+}
+
+.bar-item {
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    position: relative;
+}
+
+.bar-label {
+    flex-shrink: 0;
+    width: 150px;
+    /* Fixed width for labels */
+    text-align: right;
+    padding-right: 10px;
+    font-weight: 500;
+    color: #555;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.bar-body {
+    flex-grow: 1;
+    height: 25px;
+    /* Height of the bar */
+    border-radius: 4px;
+    display: flex;
+    overflow: hidden;
+    /* Ensure rounded corners apply to children */
+    background-color: #e0e0e0;
+    /* Fallback for 0% bars */
+    cursor: pointer;
+    /* Added for tooltip indication on the whole bar */
+}
+
+.bar-segment {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
+    font-size: 13px;
+    /* Adjusted font size */
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: width 0.5s ease-out;
+    /* Smooth transition */
+    padding: 0 5px;
+    /* Adjusted padding */
+    min-width: 45px;
+    /* NEW: Minimum width to ensure text visibility */
+}
+
+/* Specific style for age chart bars (simpler, not stacked) */
+/* REMOVED: .age-bar as it's now stacked */
+
+.outcome-legend,
+.gender-legend,
+.risk-legend,
+.comorbidity-legend {
+    /* Added .comorbidity-legend */
+    margin-top: 15px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.outcome-legend-item,
+.gender-legend-item,
+.risk-legend-item,
+.comorbidity-legend-item {
+    /* Added .comorbidity-legend-item */
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    color: #555;
+}
+
+.outcome-legend-item i,
+.gender-legend-item i,
+.risk-legend-item i,
+.comorbidity-legend-item i {
+    /* Added .comorbidity-legend-item i */
+    width: 18px;
+    height: 18px;
+    margin-right: 8px;
+    border-radius: 3px;
+}
+
+/* Styles for Custom Tooltip */
+
+
+/* Style for the colored dot in the tooltip */
+.tooltip-color-dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+/* Define colors for each outcome */
+/* Updated colors based on user request */
+.outcome-Completed {
+    background-color: #4CAF50;
+    /* เขียว */
+}
+
+.outcome-Cured {
+    background-color: #006400;
+    /* เขียวเข้ม */
+}
+
+.outcome-OnTreatment {
+    background-color: #87CEEB;
+    /* ฟ้า */
+}
+
+.outcome-TransferredOut {
+    background-color: #CFD8DC;
+    /* เทาอ่อน */
+}
+
+.outcome-Died {
+    background-color: #F44336;
+    /* แดง */
+}
+
+.outcome-LostToFollowUp {
+    background-color: #FFC107;
+    /* เหลืองส้ม */
+}
+
+.outcome-Failed {
+    background-color: #9932CC;
+    /* ม่วง */
+}
+
+.outcome-RRMDRBeforeMonth5 {
+    background-color: #FF9800;
+    /* ส้ม */
+}
+
+.outcome-ChangeDiagnosis {
+    background-color: #616161;
+    /* เทาเข้ม */
+}
+
+.outcome-Undefined {
+    background-color: #B0BEC5;
+    /* Light Blue Grey for 'ไม่ระบุ' */
+}
+
+/* NEW: Define colors for genders */
+.gender-Male {
+    background-color: #58bedd;
+}
+
+/* Blue */
+.gender-Female {
+    background-color: #e659de;
+}
+
+/* Red/Pinkish for contrast */
+.gender-UndefinedGender {
+    background-color: #B0BEC5;
+}
+
+/* Light Blue Grey for 'ไม่ระบุเพศ' */
+
+/* NEW: Define colors for risk levels */
+/* ประชากรเสี่ยงต่อวัณโรค (โทนสีฟ้า-เขียว) */
+.risk-health-personnel {
+    background-color: #1A9EBA;
+}
+
+/* Teal */
+.risk-migrant {
+    background-color: #1FC0A3;
+}
+
+/* Medium Aquamarine */
+.risk-prisoner-old {
+    background-color: #1ABC9C;
+}
+
+/* Turquoise */
+.risk-prisoner-new {
+    background-color: #2ECC71;
+}
+
+/* Emerald Green */
+.risk-bedridden {
+    background-color: #3498DB;
+}
+
+/* Peter River Blue */
+.risk-slum-camp {
+    background-color: #27AE60;
+}
+
+/* Nephritis Green */
+.risk-detention-center {
+    background-color: #16A085;
+}
+
+/* Green Sea */
+
+/* ผู้ที่มีโรคหรือภาวะเสี่ยงต่อวัณโรค (โทนสีม่วง-แดง-น้ำตาล) */
+.risk-drug-addict {
+    background-color: #9B59B6;
+}
+
+/* Amethyst */
+.risk-smoker {
+    background-color: #8E44AD;
+}
+
+/* Wisteria */
+.risk-b24-patient {
+    background-color: #C0392B;
+}
+
+/* Alizarin Red */
+.risk-mental-illness {
+    background-color: #E74C3C;
+}
+
+/* Pomegranate Red */
+.risk-gastric-surgery {
+    background-color: #D35400;
+}
+
+/* Pumpkin Orange */
+.risk-ckd {
+    background-color: #E67E22;
+}
+
+/* Carrot Orange */
+.risk-cancer {
+    background-color: #BFBFBF;
+}
+
+/* Light Gray */
+.risk-alcohol-disorder {
+    background-color: #7F8C8D;
+}
+
+/* Asbestos Gray */
+.risk-history-tb {
+    background-color: #BA4A00;
+}
+
+/* Darker Orange */
+.risk-immunosuppressed {
+    background-color: #D68910;
+}
+
+/* Golden Rod */
+.risk-diabetes {
+    background-color: #F39C12;
+}
+
+/* Orange */
+.risk-uncontrolled-diabetes {
+    background-color: #B9770E;
+}
+
+/* Darker Orange */
+.risk-copd {
+    background-color: #922B21;
+}
+
+/* Darker Red */
+.risk-other-medical {
+    background-color: #A9A9A9;
+}
+
+/* DarkGray */
+
+/* ผู้สัมผัสวัณโรค (โทนสีเหลือง-ทอง) */
+.risk-close-contact-out {
+    background-color: #F1C40F;
+}
+
+/* Canary Yellow */
+.risk-household-contact {
+    background-color: #F4D03F;
+}
+
+/* Dandelion Yellow */
+
+/* ไม่มีกลุ่มเสี่ยง (โทนสีเทา) */
+.risk-no-risk {
+    background-color: #D1D1D1;
+}
+
+/* Lighter Gray */
+.risk-undefined-risk {
+    background-color: #B0BEC5;
+}
+
+/* Light Blue Grey for 'ไม่ระบุความเสี่ยง' */
+
+/* NEW: Define colors for comorbidities */
+.comorbidity-COPD {
+    background-color: #8BC34A;
+}
+
+/* Light Green */
+.comorbidity-CKD {
+    background-color: #FFEB3B;
+}
+
+/* Yellow */
+.comorbidity-LD {
+    background-color: #FFC107;
+}
+
+/* Amber */
+.comorbidity-CA {
+    background-color: #FF5722;
+}
+
+/* Deep Orange */
+.comorbidity-DM {
+    background-color: #795548;
+}
+
+/* Brown */
+.comorbidity-HT {
+    background-color: #607D8B;
+}
+
+/* Blue Gray */
+.comorbidity-Others {
+    background-color: #9E9E9E;
+}
+
+/* Grey */
+
+
+#analysisResults {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+#analysisResults h4 {
+    color: #2c3e50;
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+
+#analysisResults p {
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+#analysisResults ul {
+    margin-left: 20px;
+    padding-left: 0;
+    list-style-type: disc;
+}
+
+#analysisResults ul li {
+    margin-bottom: 5px;
+    line-height: 1.5;
+}
+
+footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 15px;
+    color: #777;
+    font-size: 0.9em;
+    background-color: #e9ecef;
+    border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .container {
+        width: 98%;
+        margin: 10px auto;
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 1.3em;
+    }
+
+    .controls {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .controls label,
+    .controls select {
+        width: 100%;
+    }
+
+    #mapid {
+        height: 400px;
+    }
+
+    .bar-label {
+        width: 120px;
+        font-size: 13px;
+    }
+
+    .bar-segment {
+        font-size: 11px;
+        padding: 0 3px;
+    }
+
+    #analysisResults h4 {
+        font-size: 1.1em;
+    }
+
+    #analysisResults p {
+        font-size: 1em;
+    }
+
+    #analysisResults ul {
+        margin-left: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 1.2em;
+        /* Further reduce for very small phones */
+    }
+
+    #mapid {
+        height: 300px;
+        /* Reduce map height significantly for phones */
+    }
+
+    .bar-label {
+        width: 80px;
+        /* Further adjust label width */
+        font-size: 12px;
+        /* Smaller font for labels */
+    }
+
+    .bar-segment {
+        /* Adjusted for both */
+        font-size: 9px;
+        /* Even smaller font for values */
+        padding: 0 1px;
+    }
+
+    .bar-body {
+        height: 20px;
+        /* Slightly thinner bars */
+    }
+
+    .outcome-legend-item,
+    .gender-legend-item,
+    /* Added gender legend item */
+    .risk-legend-item,
+    /* Added risk legend item */
+    .comorbidity-legend-item,
+    /* Added comorbidity legend item */
+    .bar-item {
+        font-size: 12px;
+    }
+}
